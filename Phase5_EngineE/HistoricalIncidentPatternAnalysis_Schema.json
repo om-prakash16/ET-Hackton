@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Historical Incident Pattern Analysis Schema",
+  "description": "Production JSON Schema designed to map trend vector clusters, semantic similarity indexes between live states and historical disasters, and output targeted mitigation recommendations.",
+  "type": "object",
+  "properties": {
+    "prediction_id": { "type": "string", "format": "uuid" },
+    "analysis_timestamp": { "type": "string", "format": "date-time" },
+    "current_operational_signature": {
+      "type": "object",
+      "description": "The live state vector capturing current compounding anomalies and human factors (e.g., shift changeover).",
+      "properties": {
+        "active_telemetry_anomalies": { "type": "array", "items": { "type": "string" } },
+        "active_compliance_breaches": { "type": "array", "items": { "type": "string" } },
+        "human_factor_context": { "type": "string" }
+      }
+    },
+    "historical_pattern_matches": {
+      "type": "array",
+      "description": "Past incidents or disasters that semantically match the current operational signature.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "historical_incident_id": { "type": "string" },
+          "incident_name": { "type": "string" },
+          "semantic_similarity_index": { "type": "number", "minimum": 0, "maximum": 1 },
+          "causal_event_chain": { "type": "array", "items": { "type": "string" } },
+          "regulatory_recurrence_flags": { "type": "array", "items": { "type": "string" } }
+        },
+        "required": ["incident_name", "semantic_similarity_index", "causal_event_chain"]
+      }
+    },
+    "threat_vector_cluster": {
+      "type": "string",
+      "description": "The category of the impending failure mode."
+    },
+    "targeted_mitigation_recommendations": {
+      "type": "array",
+      "description": "Immediate proactive actions derived from the 'Lessons Learned' of the matched historical incident.",
+      "items": { "type": "string" }
+    }
+  },
+  "required": [
+    "prediction_id",
+    "analysis_timestamp",
+    "current_operational_signature",
+    "historical_pattern_matches",
+    "targeted_mitigation_recommendations"
+  ]
+}

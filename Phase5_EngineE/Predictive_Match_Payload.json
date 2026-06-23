@@ -1,0 +1,36 @@
+{
+  "prediction_id": "pred-9021a-bc44-4822-b91c-7722ccf09aa1",
+  "analysis_timestamp": "2026-06-23T21:46:12Z",
+  "current_operational_signature": {
+    "active_telemetry_anomalies": [
+      "TAG-PT-809: Vapor Space Pressure Rate-of-Change Elevated",
+      "TAG-TT-810: Bulk Fluid Temp Elevated"
+    ],
+    "active_compliance_breaches": [
+      "OISD-STD-105: Deferred Maintenance on Relief Valve EQ-PRV-810"
+    ],
+    "human_factor_context": "Shift Changeover in Progress (Night Shift to Morning Shift) - Incomplete Electronic Handover Log."
+  },
+  "historical_pattern_matches": [
+    {
+      "historical_incident_id": "INC-HIST-2020-VSKP",
+      "incident_name": "Visakhapatnam Steel Plant Gas Leak (2020) & Texas City Refinery Explosion (2005) Hybrid Vector",
+      "semantic_similarity_index": 0.96,
+      "causal_event_chain": [
+        "1. Deferred maintenance on critical relief systems.",
+        "2. Creeping pressure anomalies ignored or unacted upon by control room.",
+        "3. Critical information lost during shift handover.",
+        "4. Runaway reaction leading to containment loss/ignition."
+      ],
+      "regulatory_recurrence_flags": [
+        "Repeated failure to enforce Factory Act Section 41 (Hazardous Processes)."
+      ]
+    }
+  ],
+  "threat_vector_cluster": "HUMAN_FACTOR_INDUCED_CONTAINMENT_LOSS",
+  "targeted_mitigation_recommendations": [
+    "IMMEDIATE: Halt shift changeover process. Mandate physical walkdown of Tank Farm B by incoming and outgoing Shift Leads jointly.",
+    "IMMEDIATE: Acknowledge and resolve pressure alarm on TAG-PT-809. Initiate manual vapor venting if auto-valve EQ-PRV-810 remains unresponsive.",
+    "SECONDARY: Trigger Site-wide Tier 1 Process Safety Alert to Standby Emergency Response Team."
+  ]
+}
