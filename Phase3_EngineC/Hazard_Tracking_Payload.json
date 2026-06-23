@@ -1,0 +1,46 @@
+{
+  "failure_mode_id": "FM-STYRENE-GAS-TRAP-001",
+  "hazard_classification": "SAFETY_CRITICAL",
+  "description": "Runaway polymerization leading to trapped gas pressure spikes and potential vapor cloud ignition.",
+  "telemetry_anomaly_conditions": [
+    {
+      "sensor_type": "PressureTransmitter",
+      "metric_name": "Vapor_Space_Pressure",
+      "operator": "RATE_OF_CHANGE_>",
+      "threshold_value": 0.5,
+      "duration_window_seconds": 300
+    },
+    {
+      "sensor_type": "Thermocouple",
+      "metric_name": "Bulk_Fluid_Temperature",
+      "operator": ">",
+      "threshold_value": 65.0,
+      "duration_window_seconds": 600
+    }
+  ],
+  "topological_graph_correlations": [
+    {
+      "relation_target_type": "ReliefValve",
+      "cypher_pattern": "MATCH (tank:Equipment {id:'EQ-STYRENE-TANK-1'})-[:PROTECTED_BY]->(prv:ReliefValve) RETURN prv.status",
+      "required_state": "OVERDUE_MAINTENANCE"
+    },
+    {
+      "relation_target_type": "RefrigerationUnit",
+      "cypher_pattern": "MATCH (tank:Equipment)-[:COOLED_BY]->(chiller:Equipment) RETURN chiller.operational_status",
+      "required_state": "TRIPPED"
+    }
+  ],
+  "rca_pathways": [
+    {
+      "cause_id": "RCA-POLYMERIZATION-CHILLER-FAIL",
+      "likelihood_score": 0.92,
+      "cause_description": "Chiller unit trip combined with a blocked Pressure Relief Valve (PRV) causing localized runaway polymerization and gas expansion.",
+      "historical_incident_baseline": "Visakhapatnam Styrene Gas Leak Baseline (May 2020) - Auto-polymerization due to temperature control loss and stagnant fluid.",
+      "mitigation_actions": [
+        "IMMEDIATE: Manually actuate deluge cooling system for Tank EQ-STYRENE-TANK-1.",
+        "IMMEDIATE: Add inhibitor chemical (TBC) to the tank via emergency injection port.",
+        "SECONDARY: Isolate downstream transfer pumps to prevent cavitation."
+      ]
+    }
+  ]
+}

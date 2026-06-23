@@ -1,0 +1,65 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Regulatory Rule Compliance Validation Schema",
+  "description": "Production JSON Schema defining strict data models for evaluating statutory compliance status, establishing non-conformance severity levels, and structuring automated remediation workflows.",
+  "type": "object",
+  "properties": {
+    "audit_event_id": { "type": "string", "format": "uuid" },
+    "evaluation_timestamp": { "type": "string", "format": "date-time" },
+    "statutory_citation": {
+      "type": "object",
+      "properties": {
+        "authority": { "type": "string", "enum": ["OISD", "FACTORY_ACT", "PESO", "EPA", "OSHA"] },
+        "standard_id": { "type": "string" },
+        "clause_reference": { "type": "string" },
+        "legal_text_summary": { "type": "string" }
+      },
+      "required": ["authority", "standard_id", "clause_reference"]
+    },
+    "evaluation_context": {
+      "type": "object",
+      "properties": {
+        "primary_entity_id": { "type": "string" },
+        "entity_type": { "type": "string", "enum": ["WORK_PERMIT", "EQUIPMENT", "PROCEDURE", "PERSONNEL"] },
+        "violating_conditions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "fact_key": { "type": "string" },
+              "measured_state": { "type": "string" },
+              "allowed_state_constraint": { "type": "string" }
+            }
+          }
+        }
+      },
+      "required": ["primary_entity_id", "entity_type", "violating_conditions"]
+    },
+    "compliance_status": {
+      "type": "string",
+      "enum": ["COMPLIANT", "NON_COMPLIANT", "MANUAL_REVIEW_REQUIRED"]
+    },
+    "non_conformance_severity": {
+      "type": "string",
+      "enum": ["CRITICAL", "MAJOR", "MINOR", "OBSERVATION"]
+    },
+    "automated_remediation": {
+      "type": "object",
+      "properties": {
+        "action_taken": { "type": "string" },
+        "webhook_dispatched": { "type": "boolean" },
+        "target_system_api": { "type": "string", "format": "uri" },
+        "remediation_payload": { "type": "object" }
+      },
+      "required": ["action_taken", "webhook_dispatched"]
+    }
+  },
+  "required": [
+    "audit_event_id",
+    "evaluation_timestamp",
+    "statutory_citation",
+    "evaluation_context",
+    "compliance_status",
+    "non_conformance_severity"
+  ]
+}

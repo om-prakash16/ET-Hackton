@@ -1,0 +1,67 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Failure Modes & Root Cause Analysis Schema",
+  "description": "Production JSON Schema defining how telemetry anomalies are correlated with graph topology to generate Predictive Maintenance and Root Cause Analysis pathways.",
+  "type": "object",
+  "properties": {
+    "failure_mode_id": { "type": "string" },
+    "hazard_classification": {
+      "type": "string",
+      "enum": ["SAFETY_CRITICAL", "ENVIRONMENTAL_RISK", "OPERATIONAL_DEGRADATION"]
+    },
+    "description": { "type": "string" },
+    "telemetry_anomaly_conditions": {
+      "type": "array",
+      "description": "Multivariate conditions required to trigger this failure mode.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "sensor_type": { "type": "string" },
+          "metric_name": { "type": "string" },
+          "operator": { "type": "string", "enum": [">", "<", ">=", "<=", "==", "RATE_OF_CHANGE_>"] },
+          "threshold_value": { "type": "number" },
+          "duration_window_seconds": { "type": "integer" }
+        },
+        "required": ["sensor_type", "metric_name", "operator", "threshold_value", "duration_window_seconds"]
+      }
+    },
+    "topological_graph_correlations": {
+      "type": "array",
+      "description": "Graph database queries (Cypher) used to validate compound risks based on surrounding equipment state.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "relation_target_type": { "type": "string" },
+          "cypher_pattern": { "type": "string" },
+          "required_state": { "type": "string" }
+        }
+      }
+    },
+    "rca_pathways": {
+      "type": "array",
+      "description": "Potential root causes deduced from the combined telemetry and topological context.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "cause_id": { "type": "string" },
+          "likelihood_score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "cause_description": { "type": "string" },
+          "historical_incident_baseline": { "type": "string" },
+          "mitigation_actions": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "required": ["cause_id", "likelihood_score", "cause_description", "mitigation_actions"]
+      }
+    }
+  },
+  "required": [
+    "failure_mode_id",
+    "hazard_classification",
+    "description",
+    "telemetry_anomaly_conditions",
+    "topological_graph_correlations",
+    "rca_pathways"
+  ]
+}

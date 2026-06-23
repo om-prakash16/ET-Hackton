@@ -1,0 +1,84 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CopilotInferenceContextBundle Schema",
+  "description": "JSON Schema defining the standardized payload sent to the LLM. It structuralizes multi-modal inputs, localized vector chunks, and 2-hop graph substructures to strictly ground the generation.",
+  "type": "object",
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "timestamp": { "type": "string", "format": "date-time" },
+        "operator_id": { "type": "string" },
+        "location_zone": { "type": "string" }
+      },
+      "required": ["timestamp", "operator_id"]
+    },
+    "query": {
+      "type": "object",
+      "properties": {
+        "text_input": { "type": "string" },
+        "image_embeddings": {
+          "type": "array",
+          "items": { "type": "number" },
+          "description": "Optional Clip-ViT generated visual vectors."
+        }
+      },
+      "required": ["text_input"]
+    },
+    "grounding_context": {
+      "type": "object",
+      "properties": {
+        "vector_chunks": {
+          "type": "array",
+          "description": "Top-K semantically similar document chunks retrieved via BGE-M3.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "chunk_id": { "type": "string" },
+              "source_document": { "type": "string" },
+              "content": { "type": "string" },
+              "similarity_score": { "type": "number" }
+            },
+            "required": ["chunk_id", "content", "similarity_score"]
+          }
+        },
+        "graph_substructure": {
+          "type": "object",
+          "description": "2-hop sub-graph extracted from the Graph Database surrounding the identified entities.",
+          "properties": {
+            "central_nodes": {
+              "type": "array",
+              "items": { "type": "object" }
+            },
+            "1_hop_neighbors": {
+              "type": "array",
+              "items": { "type": "object" }
+            },
+            "2_hop_neighbors": {
+              "type": "array",
+              "items": { "type": "object" }
+            },
+            "edges": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "source": { "type": "string" },
+                  "target": { "type": "string" },
+                  "relation_type": { "type": "string" }
+                }
+              }
+            }
+          },
+          "required": ["central_nodes", "edges"]
+        }
+      },
+      "required": ["vector_chunks", "graph_substructure"]
+    },
+    "system_instructions": {
+      "type": "string",
+      "description": "Strict prompt engineering constraints to force adherence to the grounding_context."
+    }
+  },
+  "required": ["metadata", "query", "grounding_context"]
+}

@@ -1,0 +1,104 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Unified Asset Knowledge Graph Schema",
+  "description": "Synthetic data representation of the industrial knowledge graph populated by Engine A, capturing physical equipment, telemetry sensors, unstructured documents, and regulatory clauses.",
+  "graph_snapshot": {
+    "nodes": [
+      {
+        "id": "EQ-PUMP-101",
+        "labels": ["Equipment", "CentrifugalPump", "Asset"],
+        "properties": {
+          "name": "Feed Water Pump A",
+          "manufacturer": "Flowserve",
+          "design_capacity_m3h": 500,
+          "installation_date": "2015-08-12",
+          "operating_status": "ACTIVE"
+        }
+      },
+      {
+        "id": "TAG-PT-101A",
+        "labels": ["Sensor", "PressureTransmitter", "TelemetryTag"],
+        "properties": {
+          "parameter": "Discharge Pressure",
+          "unit": "barg",
+          "high_alarm_threshold": 45.0,
+          "low_alarm_threshold": 10.0,
+          "polling_rate_ms": 1000
+        }
+      },
+      {
+        "id": "DOC-PID-4042",
+        "labels": ["Document", "EngineeringDrawing", "P&ID"],
+        "properties": {
+          "title": "Main Feed Water System Diagram",
+          "revision": "C",
+          "extracted_date": "2026-06-23T10:00:00Z",
+          "storage_uri": "s3://asset-brain/drawings/pid_4042_revC.pdf"
+        }
+      },
+      {
+        "id": "REG-OISD-STD-119",
+        "labels": ["Regulation", "Standard", "ComplianceRule"],
+        "properties": {
+          "title": "Inspection of Pumps and Compressors",
+          "clause": "4.2.1",
+          "requirement_summary": "Continuous vibration monitoring is mandatory for critical category pumps operating above 300 m3/h.",
+          "enforcement_severity": "HIGH"
+        }
+      },
+      {
+        "id": "WO-2025-8842",
+        "labels": ["MaintenanceRecord", "WorkOrder"],
+        "properties": {
+          "description": "Replaced worn impeller and casing seals due to cavitation.",
+          "execution_date": "2025-11-04",
+          "technician_id": "TECH-099",
+          "downtime_hours": 14.5
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "rel_001",
+        "source": "TAG-PT-101A",
+        "target": "EQ-PUMP-101",
+        "type": "MONITORS",
+        "properties": {
+          "loop_id": "L-101",
+          "criticality": "HIGH",
+          "location": "Discharge Flange"
+        }
+      },
+      {
+        "id": "rel_002",
+        "source": "EQ-PUMP-101",
+        "target": "DOC-PID-4042",
+        "type": "APPEARS_IN",
+        "properties": {
+          "bounding_box_coordinates": "[x1:1200, y1:850, x2:1280, y2:920]",
+          "symbol_confidence_score": 0.98
+        }
+      },
+      {
+        "id": "rel_003",
+        "source": "EQ-PUMP-101",
+        "target": "REG-OISD-STD-119",
+        "type": "GOVERNED_BY",
+        "properties": {
+          "compliance_status": "PENDING_AUDIT",
+          "last_checked": "2026-01-01"
+        }
+      },
+      {
+        "id": "rel_004",
+        "source": "WO-2025-8842",
+        "target": "EQ-PUMP-101",
+        "type": "MAINTAINED",
+        "properties": {
+          "resolution_type": "PREVENTATIVE_CORRECTIVE",
+          "cost_usd": 4500.00
+        }
+      }
+    ]
+  }
+}

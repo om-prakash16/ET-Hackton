@@ -1,0 +1,63 @@
+{
+  "metadata": {
+    "timestamp": "2026-06-23T21:40:15Z",
+    "operator_id": "OP-774-ALPHA",
+    "location_zone": "Unit 4 - Distillation"
+  },
+  "query": {
+    "text_input": "I'm looking at Feed Water Pump A. It's vibrating heavily and the discharge pressure is dropping. Is this covered in the hackathon problem statement?",
+    "image_embeddings": null
+  },
+  "grounding_context": {
+    "vector_chunks": [
+      {
+        "chunk_id": "chunk_doc_ps8_004",
+        "source_document": "ET_AI_Hackathon_2026_Problem_Statements.pdf",
+        "content": "Problem Statement #8: Unified Asset & Operations Brain. The system must synthesize unstructured data to assist field operators. For example, if a pump exhibits high vibration and pressure drop, the brain should correlate this with cavitation risks and reference OISD standards.",
+        "similarity_score": 0.94
+      },
+      {
+        "chunk_id": "chunk_manual_p101_012",
+        "source_document": "Flowserve_Pump_Manual.pdf",
+        "content": "High vibration coupled with discharge pressure drop in centrifugal models typically indicates cavitation or seal failure.",
+        "similarity_score": 0.88
+      }
+    ],
+    "graph_substructure": {
+      "central_nodes": [
+        {
+          "id": "EQ-PUMP-101",
+          "type": "Equipment",
+          "name": "Feed Water Pump A"
+        }
+      ],
+      "1_hop_neighbors": [
+        {
+          "id": "TAG-PT-101A",
+          "type": "Sensor",
+          "parameter": "Discharge Pressure",
+          "current_value": 32.5,
+          "alarm_state": "LOW_WARNING"
+        },
+        {
+          "id": "REG-OISD-STD-119",
+          "type": "Regulation",
+          "requirement": "Vibration monitoring is mandatory."
+        }
+      ],
+      "2_hop_neighbors": [
+        {
+          "id": "WO-2025-8842",
+          "type": "WorkOrder",
+          "description": "Previous cavitation damage repair on EQ-PUMP-101."
+        }
+      ],
+      "edges": [
+        { "source": "TAG-PT-101A", "target": "EQ-PUMP-101", "relation_type": "MONITORS" },
+        { "source": "EQ-PUMP-101", "target": "REG-OISD-STD-119", "relation_type": "GOVERNED_BY" },
+        { "source": "WO-2025-8842", "target": "EQ-PUMP-101", "relation_type": "MAINTAINED" }
+      ]
+    }
+  },
+  "system_instructions": "You are the Expert Field Knowledge Copilot. You must base your answer ONLY on the provided `grounding_context`. Do not hallucinate. Acknowledge the current sensor readings and reference the ET AI Hackathon Problem Statement."
+}

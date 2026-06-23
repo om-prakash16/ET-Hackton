@@ -1,0 +1,38 @@
+{
+  "audit_event_id": "aud-6729b1f0-4c3e-48a2-9e91-827c1a2f664a",
+  "evaluation_timestamp": "2026-06-23T21:44:10Z",
+  "statutory_citation": {
+    "authority": "OISD",
+    "standard_id": "OISD-STD-105",
+    "clause_reference": "Section 4.1.2 - Hot Work Requirements",
+    "legal_text_summary": "No hot work shall be permitted within 15 meters of an unpurged storage vessel or equipment containing volatile hydrocarbons."
+  },
+  "evaluation_context": {
+    "primary_entity_id": "PTW-2026-HW-992",
+    "entity_type": "WORK_PERMIT",
+    "violating_conditions": [
+      {
+        "fact_key": "spatial_distance_to_nearest_unpurged_volatile_asset",
+        "measured_state": "12.4_meters (EQ-STYRENE-TANK-1)",
+        "allowed_state_constraint": "> 15.0_meters"
+      },
+      {
+        "fact_key": "EQ-STYRENE-TANK-1_purge_status",
+        "measured_state": "UNPURGED_HYDROCARBON_PRESENT",
+        "allowed_state_constraint": "FULLY_PURGED_Lel_ZERO"
+      }
+    ]
+  },
+  "compliance_status": "NON_COMPLIANT",
+  "non_conformance_severity": "CRITICAL",
+  "automated_remediation": {
+    "action_taken": "AUTO_REVOKE_PERMIT",
+    "webhook_dispatched": true,
+    "target_system_api": "https://api.internal.sap-pm.com/v1/permits/PTW-2026-HW-992/revoke",
+    "remediation_payload": {
+      "status": "REVOKED",
+      "reason_code": "OISD-STD-105_BREACH",
+      "automated_message": "CRITICAL SAFETY HALT: Hot work initiated 12.4m from unpurged styrene tank EQ-STYRENE-TANK-1. Immediate evacuation required."
+    }
+  }
+}
