@@ -1,0 +1,10 @@
+fastapi>=0.115.0
+uvicorn>=0.30.0
+pydantic>=2.9.0
+pydantic-settings>=2.5.0
+neo4j>=5.20.0
+qdrant-client>=1.7.3
+redis>=5.0.0
+python-multipart
+requests
+httpx

@@ -1,0 +1,2 @@
+# entity_relationship_diagrams
+Placeholder documentation for entity_relationship_diagrams.

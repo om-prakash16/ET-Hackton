@@ -1,0 +1,2 @@
+# knowledge_graph_diagrams
+Placeholder documentation for knowledge_graph_diagrams.

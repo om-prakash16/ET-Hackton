@@ -1,0 +1,60 @@
+{
+  "plant": {
+    "id": "pl-1001",
+    "name": "Houston Refinery",
+    "location": "Texas, USA"
+  },
+  "equipment": [
+    {
+      "id": "eq-5001",
+      "tag": "P-101A",
+      "name": "Main Crude Charge Pump",
+      "class": "Centrifugal Pump",
+      "manufacturer": "Flowserve",
+      "criticality": "CRITICAL"
+    },
+    {
+      "id": "eq-5002",
+      "tag": "V-200",
+      "name": "Discharge Isolation Valve",
+      "class": "Gate Valve",
+      "manufacturer": "Emerson",
+      "criticality": "HIGH"
+    }
+  ],
+  "topology": [
+    {
+      "source": "eq-5001",
+      "target": "eq-5002",
+      "relation": "CONNECTED_TO",
+      "properties": {
+        "medium": "crude_oil",
+        "direction": "downstream"
+      }
+    }
+  ],
+  "documents": [
+    {
+      "id": "doc-9001",
+      "title": "Flowserve P-101A Maintenance Manual",
+      "type": "OEM_MANUAL",
+      "chunks": [
+        {
+          "id": "chk-001",
+          "text": "Before servicing the mechanical seal on Pump P-101A, ensure that discharge valve V-200 is fully closed and locked out.",
+          "mentions": ["eq-5001", "eq-5002"]
+        }
+      ]
+    }
+  ],
+  "incidents": [
+    {
+      "id": "inc-2024-001",
+      "title": "Seal Leak due to Cavitation",
+      "date": "2024-03-15",
+      "involved_equipment": ["eq-5001"],
+      "severity": "CRITICAL",
+      "root_cause": "Low NPSH causing cavitation and subsequent mechanical seal failure."
+    }
+  ]
+}
