@@ -75,7 +75,7 @@ export default function EmployeeRegistrationPage() {
     setStep("form");
   };
 
-  const handleSubmitRequest = (e: React.FormEvent) => {
+  const handleSubmitRequest = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
@@ -89,6 +89,70 @@ export default function EmployeeRegistrationPage() {
     }
 
     setIsLoading(true);
+
+    const smtpHost = typeof window !== "undefined" ? localStorage.getItem("smtp_host") : null;
+    const smtpPort = typeof window !== "undefined" ? localStorage.getItem("smtp_port") : null;
+    const smtpUser = typeof window !== "undefined" ? localStorage.getItem("smtp_user") : null;
+    const smtpPass = typeof window !== "undefined" ? localStorage.getItem("smtp_pass") : null;
+
+    try {
+      // 1. Send confirmation to employee
+      await fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: formData.email,
+          subject: `IndusBrain AI - Employee Registration Submitted (${selectedOrg.name})`,
+          text: `Hello ${formData.firstName},\n\nYour request to join "${selectedOrg.name}" as an employee (${formData.jobTitle || formData.department}) has been submitted to the organization admin.\n\nYou will receive an email notification once your account is approved.`,
+          html: `<div style="font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; background: #ffffff; color: #1e293b; padding: 30px; border-radius: 12px; border: 1px solid #e2e8f0;">
+            <h2 style="color: #0284c7; margin-top: 0;">Employee Join Request Submitted</h2>
+            <p style="font-size: 14px; color: #475569;">Hello <strong>${formData.firstName} ${formData.lastName}</strong>,</p>
+            <p style="font-size: 14px; color: #475569;">Your request to join <strong>${selectedOrg.name}</strong> has been forwarded to the Organization Administrator for approval.</p>
+            <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0; border: 1px solid #cbd5e1;">
+              <p style="margin: 5px 0; font-size: 13px;"><strong>Department:</strong> ${formData.department}</p>
+              <p style="margin: 5px 0; font-size: 13px;"><strong>Job Title:</strong> ${formData.jobTitle || "Team Member"}</p>
+              <p style="margin: 5px 0; font-size: 13px;"><strong>Status:</strong> Pending Admin Approval</p>
+            </div>
+            <p style="font-size: 13px; color: #64748b;">You will receive an official notification email once your access is approved.</p>
+          </div>`,
+          smtpHost,
+          smtpPort,
+          smtpUser,
+          smtpPass
+        })
+      });
+
+      // 2. Notify Org Admin
+      await fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: selectedOrg.adminEmail || "admin@indusbrain.ai",
+          subject: `[Action Required] New Employee Access Request - ${formData.firstName} ${formData.lastName}`,
+          text: `A new user (${formData.firstName} ${formData.lastName}, ${formData.email}) has requested access to join ${selectedOrg.name} under department ${formData.department}.\n\nPlease review and approve this request in your Organization Admin Portal.`,
+          html: `<div style="font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; background: #ffffff; color: #1e293b; padding: 30px; border-radius: 12px; border: 1px solid #e2e8f0;">
+            <h2 style="color: #0284c7; margin-top: 0;">New Employee Access Request</h2>
+            <p style="font-size: 14px; color: #475569;">Hello Admin,</p>
+            <p style="font-size: 14px; color: #475569;">A new employee has requested access to join <strong>${selectedOrg.name}</strong>.</p>
+            <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0; border: 1px solid #cbd5e1;">
+              <p style="margin: 5px 0; font-size: 13px;"><strong>Name:</strong> ${formData.firstName} ${formData.lastName}</p>
+              <p style="margin: 5px 0; font-size: 13px;"><strong>Email:</strong> ${formData.email}</p>
+              <p style="margin: 5px 0; font-size: 13px;"><strong>Department:</strong> ${formData.department}</p>
+            </div>
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="http://localhost:3000/admin/users" style="background: #0284c7; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 14px; display: inline-block;">Review in Admin Portal</a>
+            </div>
+          </div>`,
+          smtpHost,
+          smtpPort,
+          smtpUser,
+          smtpPass
+        })
+      });
+    } catch (err) {
+      console.error("Failed to send notification emails:", err);
+    }
+
     setTimeout(() => {
       setIsLoading(false);
       if (typeof window !== "undefined") {

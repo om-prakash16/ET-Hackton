@@ -41,6 +41,22 @@ export interface Organization {
 
 const INITIAL_ORGS: Organization[] = [
   { 
+    id: "org-gurucraft-001", 
+    name: "Gurucraft Oil & Gas", 
+    plan: "Enterprise", 
+    users: 1, 
+    status: "Approved", 
+    created: "2026-07-02",
+    owner: "Annu",
+    email: "andad622@gmail.com",
+    industry: "Oil & Gas / Refinery",
+    companySize: "1,000-5,000 employees",
+    storage: "500 GB",
+    license: "500 Users",
+    plants: 1,
+    source: "Super Admin Enterprise Provisioning"
+  },
+  { 
     id: "org-101", 
     name: "Tata Steel", 
     plan: "Enterprise", 
@@ -267,7 +283,7 @@ export default function OrganizationsPage() {
     setNoteText("");
   };
 
-  const handleEnterpriseProvision = () => {
+  const handleEnterpriseProvision = async () => {
     if (!name.trim() || !ownerEmail.trim()) return;
     
     const newOrg: Organization = {
@@ -290,7 +306,50 @@ export default function OrganizationsPage() {
     saveToStorage([newOrg, ...orgs]);
     setIsCreateModalOpen(false);
     if (sendInvite) {
-      alert(`✅ Enterprise Organization Provisioned!\nSecure invitation link sent to ${ownerEmail}`);
+      const smtpHost = typeof window !== "undefined" ? localStorage.getItem("smtp_host") : null;
+      const smtpPort = typeof window !== "undefined" ? localStorage.getItem("smtp_port") : null;
+      const smtpUser = typeof window !== "undefined" ? localStorage.getItem("smtp_user") : null;
+      const smtpPass = typeof window !== "undefined" ? localStorage.getItem("smtp_pass") : null;
+
+      try {
+        const res = await fetch("/api/send-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            to: ownerEmail,
+            subject: `Welcome to IndusBrain AI - Enterprise Onboarding for ${name}`,
+            text: `Hello ${ownerName || "Enterprise Owner"},\n\nYour enterprise organization "${name}" has been provisioned on IndusBrain AI.\n\nLogin URL: http://localhost:3000/login\nOrganization ID: ${newOrg.id}\nPlan: ${plan}\nStorage Quota: ${storage}\n\nPlease log in to complete your plant and department setup.`,
+            html: `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; color: #1e293b; padding: 30px; border-radius: 12px; border: 1px solid #e2e8f0;">
+              <h2 style="color: #0284c7; margin-top: 0;">Enterprise Organization Provisioned</h2>
+              <p style="font-size: 14px; color: #475569;">Hello <strong>${ownerName || "Enterprise Owner"}</strong>,</p>
+              <p style="font-size: 14px; color: #475569;">Your enterprise tenant <strong>${name}</strong> has been successfully provisioned by the Super Admin.</p>
+              <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0; border: 1px solid #cbd5e1;">
+                <p style="margin: 5px 0; font-size: 13px;"><strong>Organization:</strong> ${name}</p>
+                <p style="margin: 5px 0; font-size: 13px;"><strong>License Plan:</strong> ${plan} (${license})</p>
+                <p style="margin: 5px 0; font-size: 13px;"><strong>Storage Quota:</strong> ${storage}</p>
+                <p style="margin: 5px 0; font-size: 13px;"><strong>Status:</strong> Approved / Active</p>
+              </div>
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="http://localhost:3000/login" style="background: #0284c7; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 14px; display: inline-block;">Access Command Center</a>
+              </div>
+            </div>`,
+            smtpHost,
+            smtpPort,
+            smtpUser,
+            smtpPass
+          })
+        });
+        const data = await res.json();
+        if (data.success && data.isEthereal && data.previewUrl) {
+          if (confirm(`📧 Ethereal Test Invite Email Dispatched to ${ownerEmail}!\n\nCheck preview URL now?`)) {
+            window.open(data.previewUrl, "_blank");
+          }
+        } else {
+          alert(`✅ Enterprise Organization Provisioned!\nSecure onboarding invitation emailed to ${ownerEmail}`);
+        }
+      } catch (e) {
+        alert(`✅ Enterprise Organization Provisioned!\n(Email dispatch error: ${e})`);
+      }
     }
   };
 

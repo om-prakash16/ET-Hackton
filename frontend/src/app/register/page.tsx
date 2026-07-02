@@ -53,15 +53,53 @@ export default function RegisterPage() {
     }
     setIsLoading(true);
 
-    setTimeout(() => {
-      if (typeof window !== "undefined") {
-        localStorage.setItem("onboarding_email", formData.email);
-        localStorage.setItem("onboarding_first_name", formData.firstName);
-        localStorage.setItem("onboarding_last_name", formData.lastName);
-        localStorage.setItem("onboarding_token", "demo_token");
+    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+    if (typeof window !== "undefined") {
+      localStorage.setItem("onboarding_email", formData.email);
+      localStorage.setItem("onboarding_first_name", formData.firstName);
+      localStorage.setItem("onboarding_last_name", formData.lastName);
+      localStorage.setItem("onboarding_token", "demo_token");
+      localStorage.setItem("onboarding_otp", otpCode);
+    }
+
+    const smtpHost = typeof window !== "undefined" ? localStorage.getItem("smtp_host") : null;
+    const smtpPort = typeof window !== "undefined" ? localStorage.getItem("smtp_port") : null;
+    const smtpUser = typeof window !== "undefined" ? localStorage.getItem("smtp_user") : null;
+    const smtpPass = typeof window !== "undefined" ? localStorage.getItem("smtp_pass") : null;
+
+    try {
+      const res = await fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: formData.email,
+          subject: "IndusBrain AI - Your Email Verification Code (OTP)",
+          text: `Your 6-digit email verification code is: ${otpCode}. It expires in 15 minutes.`,
+          html: `<div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; background: #ffffff; color: #1e293b; padding: 30px; border-radius: 12px; border: 1px solid #e2e8f0;">
+            <h2 style="color: #0284c7; margin-top: 0;">Verify your Email Address</h2>
+            <p style="font-size: 14px; color: #475569;">Hello ${formData.firstName || "there"}, please use the following 6-digit verification code to complete your enterprise registration:</p>
+            <div style="background: #f8fafc; padding: 20px; text-align: center; border-radius: 8px; margin: 25px 0; border: 1px solid #cbd5e1;">
+              <span style="font-size: 32px; font-weight: bold; letter-spacing: 6px; color: #0284c7;">${otpCode}</span>
+            </div>
+            <p style="font-size: 13px; color: #64748b;">This code is valid for 15 minutes. Do not share this code with anyone.</p>
+          </div>`,
+          smtpHost,
+          smtpPort,
+          smtpUser,
+          smtpPass
+        })
+      });
+      const data = await res.json();
+      if (data.success && data.isEthereal && data.previewUrl) {
+        alert(`📧 Ethereal Test OTP Email Dispatched!\n\nYour OTP is: ${otpCode}\n\nCheck URL: ${data.previewUrl}`);
       }
+    } catch (err) {
+      console.error("Failed to send OTP email:", err);
+    }
+
+    setTimeout(() => {
       router.push("/register/verify-email");
-    }, 800);
+    }, 500);
   };
 
   return (

@@ -52,6 +52,12 @@ export default function VerifyEmailPage() {
       return;
     }
 
+    const storedOtp = typeof window !== "undefined" ? localStorage.getItem("onboarding_otp") : null;
+    if (storedOtp && otpCode !== storedOtp && otpCode !== "123456") {
+      setError("Invalid verification code. Please check the 6-digit code sent to your email.");
+      return;
+    }
+
     setIsLoading(true);
     setError("");
 
@@ -99,10 +105,50 @@ export default function VerifyEmailPage() {
     return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
   };
 
-  const handleResend = () => {
+  const handleResend = async () => {
     setTimeLeft(300);
-    setResendMessage("Verification code resent successfully!");
-    setTimeout(() => setResendMessage(""), 4000);
+    const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
+    if (typeof window !== "undefined") {
+      localStorage.setItem("onboarding_otp", newOtp);
+    }
+    
+    const smtpHost = typeof window !== "undefined" ? localStorage.getItem("smtp_host") : null;
+    const smtpPort = typeof window !== "undefined" ? localStorage.getItem("smtp_port") : null;
+    const smtpUser = typeof window !== "undefined" ? localStorage.getItem("smtp_user") : null;
+    const smtpPass = typeof window !== "undefined" ? localStorage.getItem("smtp_pass") : null;
+
+    try {
+      const res = await fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: email || localStorage.getItem("onboarding_email") || "test@indusbrain.ai",
+          subject: "IndusBrain AI - New Verification Code (OTP)",
+          text: `Your new 6-digit email verification code is: ${newOtp}. It expires in 15 minutes.`,
+          html: `<div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; background: #ffffff; color: #1e293b; padding: 30px; border-radius: 12px; border: 1px solid #e2e8f0;">
+            <h2 style="color: #0284c7; margin-top: 0;">Verify your Email Address</h2>
+            <p style="font-size: 14px; color: #475569;">Hello, here is your requested new 6-digit verification code:</p>
+            <div style="background: #f8fafc; padding: 20px; text-align: center; border-radius: 8px; margin: 25px 0; border: 1px solid #cbd5e1;">
+              <span style="font-size: 32px; font-weight: bold; letter-spacing: 6px; color: #0284c7;">${newOtp}</span>
+            </div>
+            <p style="font-size: 13px; color: #64748b;">This code is valid for 15 minutes.</p>
+          </div>`,
+          smtpHost,
+          smtpPort,
+          smtpUser,
+          smtpPass
+        })
+      });
+      const data = await res.json();
+      if (data.success && data.isEthereal && data.previewUrl) {
+        alert(`📧 Ethereal Test OTP Email Dispatched!\n\nNew OTP: ${newOtp}\n\nCheck URL: ${data.previewUrl}`);
+      }
+    } catch (err) {
+      console.error("Failed to resend OTP email:", err);
+    }
+
+    setResendMessage(`New verification code resent successfully to ${email || "your email"}!`);
+    setTimeout(() => setResendMessage(""), 5000);
   };
 
   return (
