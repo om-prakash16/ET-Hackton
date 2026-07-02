@@ -9,7 +9,7 @@ Today, we are presenting our Industrial AI Operating System. This is not a chatb
 ---
 
 ## Step 1: The Unified Brain (Executive Dashboard)
-**Action:** Open the application to the default 'Unified Brain' tab (`http://localhost:3001`).
+**Action:** Open the application to the default 'Unified Brain' tab (`http://localhost:3000`).
 **Presenter:**
 "When a Plant Manager logs in, they don't see a static dashboard. They see a live operational brain. 
 * Point to the top metrics: We are actively monitoring total assets, graph nodes, and compliance status.
