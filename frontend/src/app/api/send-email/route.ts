@@ -60,7 +60,7 @@ export async function POST(request: Request) {
     }
 
     const mailOptions = {
-      from: `IndusBrain AI Enterprise <${process.env.SMTP_SENDER || user || "no-reply@indusbrain.ai"}>`,
+      from: `IndusBrain AI Enterprise <${user || process.env.SMTP_SENDER || "no-reply@indusbrain.ai"}>`,
       to,
       subject,
       text: text || subject,
@@ -70,6 +70,12 @@ export async function POST(request: Request) {
         <hr style="border: 0; border-top: 1px solid #ccc; margin: 20px 0;"/>
         <p style="font-size: 12px; color: #777;">This is an automated message from the IndusBrain AI Enterprise Onboarding & Governance Platform.</p>
       </div>`,
+      headers: {
+        "X-Priority": "1 (Highest)",
+        "X-MSMail-Priority": "High",
+        "Importance": "High",
+        "X-Entity-Ref-ID": `${Date.now()}`
+      }
     };
 
     const info = await transporter.sendMail(mailOptions);

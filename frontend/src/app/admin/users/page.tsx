@@ -166,7 +166,7 @@ export default function UsersPage() {
       status: "Pending",
       sentDate: new Date().toISOString().split("T")[0]
     };
-    const baseUrl = typeof window !== "undefined" && window.location.hostname !== "localhost" ? window.location.origin : "https://indusbrain.ai";
+    const baseUrl = typeof window !== "undefined" ? window.location.origin : "http://localhost:3000";
     saveInvitesToStorage([newInvite, ...invitations]);
     setIsInviteModalOpen(false);
     
@@ -188,22 +188,18 @@ export default function UsersPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           to: inviteEmail,
-          subject: `IndusBrain AI - Invitation to join ${inviteOrg}`,
-          text: `You have been invited to join ${inviteOrg} as ${inviteRole} (${inviteDept}). Open link to onboard: ${baseUrl}/invite/${newInvite.id}`,
-          html: `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #0B1121; color: #ffffff; padding: 30px; border-radius: 12px; border: 1px solid #1E293B;">
-            <h1 style="color: #3B82F6; margin-bottom: 5px;">IndusBrain<span style="color: #ffffff;">AI</span></h1>
-            <p style="color: #A1A1AA; font-size: 13px; margin-bottom: 20px;">Enterprise Employee Onboarding</p>
-            <h2 style="color: #ffffff; font-size: 20px;">You have been invited to join ${inviteOrg}!</h2>
-            <p style="color: #D4D4D8; font-size: 14px; line-height: 1.6;">Your Organization Admin has invited you to access the enterprise industrial copilot and plant telemetry workspace.</p>
-            <div style="background: #1E293B; padding: 15px; border-radius: 8px; margin: 20px 0; border: 1px solid #334155;">
-              <p style="margin: 5px 0; font-size: 13px; color: #E2E8F0;"><strong>Assigned Role:</strong> <span style="color: #3B82F6;">${inviteRole}</span></p>
-              <p style="margin: 5px 0; font-size: 13px; color: #E2E8F0;"><strong>Department:</strong> <span style="color: #10B981;">${inviteDept}</span></p>
-              <p style="margin: 5px 0; font-size: 13px; color: #E2E8F0;"><strong>Plant / Facility:</strong> ${invitePlant}</p>
+          subject: `IndusBrain AI - Official Onboarding Invitation for ${inviteOrg}`,
+          text: `Hello, you have been invited to join ${inviteOrg} as ${inviteRole} (${inviteDept}). To get started, open your onboarding link: ${baseUrl}/invite/${newInvite.id}`,
+          html: `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; color: #1e293b; padding: 30px; border-radius: 12px; border: 1px solid #e2e8f0;">
+            <h2 style="color: #0284c7; margin-top: 0;">You are invited to join ${inviteOrg}!</h2>
+            <p style="font-size: 14px; color: #475569; line-height: 1.6;">Hello, your Organization Administrator has invited you to access the IndusBrain AI Enterprise Command Center and Telemetry Workspace.</p>
+            <div style="background: #f8fafc; padding: 16px; border-radius: 8px; margin: 20px 0; border: 1px solid #cbd5e1;">
+              <p style="margin: 6px 0; font-size: 13px; color: #334155;"><b>Assigned Role:</b> <span style="color: #0284c7;">${inviteRole}</span></p>
+              <p style="margin: 6px 0; font-size: 13px; color: #334155;"><b>Department:</b> <span style="color: #059669;">${inviteDept}</span></p>
+              <p style="margin: 6px 0; font-size: 13px; color: #334155;"><b>Plant Facility:</b> ${invitePlant}</p>
             </div>
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="${baseUrl}/invite/${newInvite.id}" style="display: inline-block; background: #10B981; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 10px; font-weight: bold; font-size: 14px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">Accept Invitation & Join Team</a>
-            </div>
-            <p style="color: #71717A; font-size: 11px; margin-top: 30px; border-top: 1px solid #334155; padding-top: 15px;">This secure invitation token expires in 7 days. If the button does not work, copy and paste this link into your browser:<br/><a href="${baseUrl}/invite/${newInvite.id}" style="color: #3B82F6;">${baseUrl}/invite/${newInvite.id}</a></p>
+            <p style="margin-top: 25px;"><a href="${baseUrl}/invite/${newInvite.id}" style="background: #0284c7; color: #ffffff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 14px; display: inline-block;">Accept Invitation & Onboard</a></p>
+            <p style="font-size: 12px; color: #64748b; margin-top: 25px; border-top: 1px solid #e2e8f0; padding-top: 15px;">If the button does not open, copy and paste this link: ${baseUrl}/invite/${newInvite.id}</p>
           </div>`,
           smtpHost,
           smtpPort,
@@ -229,8 +225,47 @@ export default function UsersPage() {
     setInviteEmail("");
   };
 
-  const handleResendInvite = (inv: Invitation) => {
-    alert(`🔄 Resent onboarding invitation email to ${inv.email} with renewed 7-day expiration token.`);
+  const handleResendInvite = async (inv: Invitation) => {
+    const baseUrl = typeof window !== "undefined" ? window.location.origin : "http://localhost:3000";
+    const smtpHost = typeof window !== "undefined" ? localStorage.getItem("smtp_host") : null;
+    const smtpPort = typeof window !== "undefined" ? localStorage.getItem("smtp_port") : null;
+    const smtpUser = typeof window !== "undefined" ? localStorage.getItem("smtp_user") : null;
+    const smtpPass = typeof window !== "undefined" ? localStorage.getItem("smtp_pass") : null;
+
+    try {
+      const res = await fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: inv.email,
+          subject: `IndusBrain AI - Official Onboarding Invitation for ${inv.organization}`,
+          text: `Hello, you have been invited to join ${inv.organization} as ${inv.role} (${inv.department}). To get started, open your onboarding link: ${baseUrl}/invite/${inv.id}`,
+          html: `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; color: #1e293b; padding: 30px; border-radius: 12px; border: 1px solid #e2e8f0;">
+            <h2 style="color: #0284c7; margin-top: 0;">You are invited to join ${inv.organization}!</h2>
+            <p style="font-size: 14px; color: #475569; line-height: 1.6;">Hello, your Organization Administrator has resent your invitation to access the IndusBrain AI Enterprise Command Center.</p>
+            <div style="background: #f8fafc; padding: 16px; border-radius: 8px; margin: 20px 0; border: 1px solid #cbd5e1;">
+              <p style="margin: 6px 0; font-size: 13px; color: #334155;"><b>Assigned Role:</b> <span style="color: #0284c7;">${inv.role}</span></p>
+              <p style="margin: 6px 0; font-size: 13px; color: #334155;"><b>Department:</b> <span style="color: #059669;">${inv.department}</span></p>
+              <p style="margin: 6px 0; font-size: 13px; color: #334155;"><b>Plant Facility:</b> ${inv.plant}</p>
+            </div>
+            <p style="margin-top: 25px;"><a href="${baseUrl}/invite/${inv.id}" style="background: #0284c7; color: #ffffff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 14px; display: inline-block;">Accept Invitation & Onboard</a></p>
+            <p style="font-size: 12px; color: #64748b; margin-top: 25px; border-top: 1px solid #e2e8f0; padding-top: 15px;">If the button does not open, copy and paste this link: ${baseUrl}/invite/${inv.id}</p>
+          </div>`,
+          smtpHost,
+          smtpPort,
+          smtpUser,
+          smtpPass
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert(`✅ Invitation resent successfully to ${inv.email}!\nMessage ID: ${data.messageId}`);
+      } else {
+        alert(`⚠️ Could not resend invitation: ${data.error}`);
+      }
+    } catch (err: any) {
+      alert(`⚠️ Email dispatch error: ${err.message}`);
+    }
     saveInvitesToStorage(invitations.map(i => i.id === inv.id ? { ...i, status: "Pending" as InviteStatus, sentDate: new Date().toISOString().split("T")[0] } : i));
   };
 
