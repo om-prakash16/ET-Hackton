@@ -8,6 +8,7 @@ from app.db.neo4j_client import neo4j_client
 from app.db.session import engine
 from app.core.events import event_publisher
 from app.workers.document_worker import pipeline_worker
+from app.domains.telemetry.engine import telemetry_engine
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("IndustrialBrain")
@@ -22,10 +23,15 @@ async def lifespan(app: FastAPI):
     # Start background Kafka consumers
     await pipeline_worker.start()
     
+    # Start Telemetry Engine
+    logger.info("Starting Telemetry Engine...")
+    asyncio.create_task(telemetry_engine.start())
+    
     yield
     
     # Shutdown: Clean up resources
     logger.info("Shutting down Industrial Intelligence Operating System...")
+    telemetry_engine.stop()
     await pipeline_worker.stop()
     await event_publisher.stop()
     neo4j_client.close()
@@ -52,12 +58,18 @@ from app.domains.predictive import api as predictive
 from app.domains.ingestion import api as ingest
 from app.domains.copilot import api as copilot
 from app.domains.maintenance import api as maintenance
+from app.domains.dashboard import api as dashboard
+from app.domains.telemetry import api as telemetry
+from app.domains.documents import router as documents_router
 
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["Authentication"])
 app.include_router(compliance.router, prefix="/api/v1/compliance", tags=["Compliance"])
 app.include_router(ingest.router, prefix="/api/v1/ingest", tags=["Ingestion"])
 app.include_router(copilot.router, prefix="/api/v1/copilot", tags=["Copilot"])
+app.include_router(telemetry.router, prefix="/api/v1/telemetry", tags=["Telemetry"])
 app.include_router(maintenance.router, prefix="/api/v1/maintenance", tags=["Maintenance Intelligence"])
+app.include_router(dashboard.router, prefix="/api/v1/dashboard", tags=["Command Center"])
+app.include_router(documents_router.router, prefix="/api/v1/documents", tags=["DMS"])
 
 @app.get("/")
 def health_check():

@@ -1,11 +1,49 @@
 "use client";
 import React, { useState } from 'react';
-import { UploadCloud, Database, ArrowRight, Search, Filter, Network, Eye, Download, Trash2 } from 'lucide-react';
+import { UploadCloud, Database, ArrowRight, Search, Filter, Network, Eye, Download, Trash2, Folder, FolderOpen, ChevronRight, ChevronDown, FileText } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Document } from '@/types/intelliops';
 import { MOCK_DOCUMENTS } from '@/lib/mockData';
 import DocumentRow from '@/components/ui/DocumentRow';
 import FileTypeIcon from '@/components/ui/FileTypeIcon';
+
+const MOCK_FOLDERS = [
+  { id: '1', name: 'Engineering Diagrams', isOpen: true, children: [
+      { id: '1-1', name: 'P&IDs', isOpen: false, children: [] },
+      { id: '1-2', name: 'Electrical', isOpen: false, children: [] }
+    ]
+  },
+  { id: '2', name: 'Safety Procedures (SOPs)', isOpen: false, children: [] },
+  { id: '3', name: 'Maintenance Manuals', isOpen: false, children: [] }
+];
+
+const FolderItem = ({ folder, level = 0 }: { folder: any, level?: number }) => {
+  const [isOpen, setIsOpen] = useState(folder.isOpen);
+  return (
+    <div className="flex flex-col">
+      <div 
+        className="flex items-center gap-2 py-1.5 px-2 hover:bg-deep/50 rounded cursor-pointer transition-colors group"
+        style={{ paddingLeft: `${level * 12 + 8}px` }}
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        {folder.children && folder.children.length > 0 ? (
+          isOpen ? <ChevronDown className="w-3 h-3 text-muted" /> : <ChevronRight className="w-3 h-3 text-muted" />
+        ) : (
+          <div className="w-3" />
+        )}
+        {isOpen ? <FolderOpen className="w-4 h-4 text-accent-cyan" /> : <Folder className="w-4 h-4 text-muted group-hover:text-accent-cyan transition-colors" />}
+        <span className="text-xs text-primary truncate">{folder.name}</span>
+      </div>
+      {isOpen && folder.children && folder.children.length > 0 && (
+        <div className="flex flex-col mt-0.5">
+          {folder.children.map((child: any) => (
+            <FolderItem key={child.id} folder={child} level={level + 1} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 export function DocumentCenterPanel() {
   const [selectedDoc, setSelectedDoc] = useState<Document | null>(null);
@@ -31,7 +69,7 @@ export function DocumentCenterPanel() {
   ];
 
   return (
-    <div className="flex flex-col max-w-7xl mx-auto w-full gap-6">
+    <div className="flex flex-col max-w-[1400px] mx-auto w-full gap-6">
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
         <div className="flex items-start justify-between">
@@ -39,28 +77,48 @@ export function DocumentCenterPanel() {
             <div className="flex items-center gap-3 mb-1">
               <div className="w-1 h-6 rounded-full" style={{ background: 'linear-gradient(180deg, var(--accent-cyan), transparent)' }} />
               <h2 className="text-2xl font-bold tracking-tight text-primary">
-                Document Corpus & Knowledge Graph
+                Enterprise Document Center
               </h2>
             </div>
             <p className="text-sm ml-4 text-muted">
-              Manage unstructured data ingestion and verify extracted knowledge relationships.
+              Intelligent repository with AI Knowledge Graph Extraction.
             </p>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="px-3 py-1.5 rounded-lg text-xs font-mono flex items-center gap-2"
-              style={{ background: 'rgba(0, 212, 255, 0.05)', border: '1px solid rgba(0, 212, 255, 0.15)', color: 'var(--accent-cyan)' }}>
-              <Database className="w-3.5 h-3.5" />
-              14,302 Documents · 842K Nodes
+          <div className="flex items-center gap-4">
+            <div className="px-3 py-2 rounded-lg text-xs flex flex-col glass-card border-none bg-deep/20">
+              <span className="text-muted text-[10px] uppercase font-bold tracking-wider">AI Processing Queue</span>
+              <span className="text-primary font-mono font-bold flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-accent-cyan animate-pulse"/> 14 Documents</span>
+            </div>
+            <div className="px-3 py-2 rounded-lg text-xs flex flex-col glass-card border-none bg-deep/20">
+              <span className="text-muted text-[10px] uppercase font-bold tracking-wider">Total Indexed</span>
+              <span className="text-primary font-mono font-bold flex items-center gap-2"><Database className="w-3 h-3 text-emerald-400"/> 14,302 / 842K Nodes</span>
             </div>
           </div>
         </div>
       </motion.div>
 
-      <div className="flex gap-5 flex-col lg:flex-row" style={{ minHeight: '580px' }}>
-        {/* Left: Document Table */}
-        <motion.div
+      <div className="flex gap-4 flex-col lg:flex-row" style={{ minHeight: '620px' }}>
+        
+        {/* Left: Folder Explorer Sidebar */}
+        <motion.div 
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
+          className="w-full lg:w-60 shrink-0 glass-card p-4 flex flex-col"
+        >
+          <h3 className="text-xs font-bold tracking-widest text-muted uppercase mb-4 flex items-center gap-2">
+            <FolderOpen className="w-3.5 h-3.5" /> Workspaces
+          </h3>
+          <div className="flex flex-col gap-1 overflow-y-auto">
+            {MOCK_FOLDERS.map(folder => (
+              <FolderItem key={folder.id} folder={folder} />
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Middle: Document Table */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
           className="flex-1 glass-card flex flex-col overflow-hidden"
         >
@@ -72,17 +130,28 @@ export function DocumentCenterPanel() {
                 type="text"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                placeholder="Search corpus..."
+                placeholder="Search AI metadata, content, or tags..."
                 className="w-full bg-void/50 border border-subtle rounded-lg py-2 pl-9 pr-4 text-sm text-primary placeholder-muted focus:outline-none focus:border-active"
               />
             </div>
             <button className="btn-ghost flex items-center gap-1.5 py-2 px-3 text-xs">
-              <Filter className="w-3.5 h-3.5" /> Filter
+              <Filter className="w-3.5 h-3.5" /> AI Filters
+            </button>
+            <button className="btn-primary flex items-center gap-1.5 py-2 px-4 text-xs ml-2">
+              <UploadCloud className="w-3.5 h-3.5" /> Upload
             </button>
           </div>
 
+          {/* Table Headers */}
+          <div className="grid grid-cols-12 gap-4 px-4 py-2 border-b border-subtle bg-deep/20 text-xs font-semibold text-muted">
+             <div className="col-span-5">Name & Description</div>
+             <div className="col-span-3">Status</div>
+             <div className="col-span-2">Owner</div>
+             <div className="col-span-2 text-right">Modified</div>
+          </div>
+
           {/* Table/List View */}
-          <div className="p-4 flex flex-col gap-2 overflow-y-auto max-h-[500px]">
+          <div className="p-4 flex flex-col gap-2 overflow-y-auto flex-1">
             {filteredDocs.map((doc) => (
               <DocumentRow 
                 key={doc.id} 
@@ -95,13 +164,14 @@ export function DocumentCenterPanel() {
           {/* Footer */}
           <div className="px-4 py-3 border-t border-subtle flex items-center justify-between mt-auto">
             <span className="text-xs text-muted">Showing {filteredDocs.length} of {MOCK_DOCUMENTS.length} documents</span>
-            <button className="btn-ghost flex items-center gap-1.5 text-xs py-1.5 px-3">
-              View All Corpus <ArrowRight className="w-3 h-3" />
-            </button>
+            <div className="flex gap-2">
+               <button className="btn-ghost text-[10px] py-1 px-2">Previous</button>
+               <button className="btn-ghost text-[10px] py-1 px-2">Next</button>
+            </div>
           </div>
         </motion.div>
 
-        {/* Right Column: Upload Zone / Details Panel */}
+        {/* Right Column: Details Panel */}
         <div className="w-full lg:w-80 shrink-0 flex flex-col">
           <AnimatePresence mode="wait">
             {selectedDoc ? (
@@ -121,7 +191,7 @@ export function DocumentCenterPanel() {
                       <h3 className="text-sm font-semibold truncate max-w-[140px] text-primary" title={selectedDoc.name}>
                         {selectedDoc.name}
                       </h3>
-                      <p className="text-[11px] text-muted">{selectedDoc.size} · Indexed</p>
+                      <p className="text-[11px] text-muted">v2.4 · {selectedDoc.size} · Indexed</p>
                     </div>
                   </div>
                   <button 
@@ -143,6 +213,20 @@ export function DocumentCenterPanel() {
                   <button className="flex items-center gap-1 flex-1 py-1.5 text-[10px] justify-center rounded border border-red-500/20 bg-red-500/5 text-red-400 hover:bg-red-500/10 transition-all">
                     <Trash2 className="w-3 h-3" /> Delete
                   </button>
+                </div>
+                
+                {/* Approval Workflow */}
+                <div>
+                   <h4 className="text-[10px] font-bold tracking-widest text-muted uppercase mb-3">Approval Workflow</h4>
+                   <div className="p-3 rounded-lg border border-emerald-500/20 bg-emerald-500/5 flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                         <span className="text-emerald-400 font-bold text-xs">OK</span>
+                      </div>
+                      <div>
+                         <p className="text-xs font-semibold text-emerald-400">Approved for Production</p>
+                         <p className="text-[10px] text-muted">By John Doe on Oct 14, 2026</p>
+                      </div>
+                   </div>
                 </div>
 
                 {/* Knowledge Extraction */}
@@ -233,21 +317,14 @@ export function DocumentCenterPanel() {
                 >
                   <UploadCloud className="w-8 h-8 text-muted" />
                 </motion.div>
-                <h3 className="text-lg font-bold mb-2 text-primary">Ingest New Data</h3>
+                <h3 className="text-lg font-bold mb-2 text-primary">Upload Documents</h3>
                 <p className="text-xs leading-relaxed mb-6 max-w-[200px] text-muted">
-                  Drop PDFs, P&IDs, spreadsheets, or DOCX files to expand the Knowledge Graph.
+                  Drag and drop Engineering Diagrams, Specs, and Manuals to process through AI.
                 </p>
                 <button className="btn-primary flex items-center gap-2 text-xs py-2 px-4">
                   <UploadCloud className="w-4 h-4" />
                   Browse Files
                 </button>
-                <div className="mt-6 flex flex-wrap justify-center gap-1.5">
-                  {['PDF', 'DWG', 'XLSX', 'DOCX', 'TXT'].map(ext => (
-                    <span key={ext} className="px-2 py-0.5 rounded text-[9px] font-semibold border border-subtle bg-void/50 text-muted">
-                      .{ext}
-                    </span>
-                  ))}
-                </div>
               </motion.div>
             )}
           </AnimatePresence>

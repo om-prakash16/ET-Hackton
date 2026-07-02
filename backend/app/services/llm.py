@@ -3,7 +3,7 @@ from typing import Dict, Any, List
 
 logger = logging.getLogger(__name__)
 
-import google.generativeai as genai
+from google import genai
 from app.core.config import settings
 
 class LLMProvider:
@@ -12,8 +12,10 @@ class LLMProvider:
     """
     
     def __init__(self):
-        if settings.GEMINI_API_KEY:
-            genai.configure(api_key=settings.GEMINI_API_KEY)
+        if settings.AI_API_KEY:
+            self.client = genai.Client(api_key=settings.AI_API_KEY)
+        else:
+            self.client = genai.Client()
             
     async def generate_response(self, system_prompt: str, context: str, user_query: str) -> str:
         """
@@ -25,14 +27,15 @@ class LLMProvider:
             return "I'm sorry, but I do not have enough evidence in the system to answer your question."
             
         try:
-            model = genai.GenerativeModel(
-                model_name="gemini-2.5-flash",
-                system_instruction=system_prompt
-            )
-            
             prompt = f"Context Evidence:\n{context}\n\nUser Query:\n{user_query}\n\nPlease synthesize an answer purely from the provided context."
             
-            response = await model.generate_content_async(prompt)
+            response = self.client.models.generate_content(
+                model="gemini-2.5-flash",
+                contents=prompt,
+                config=genai.types.GenerateContentConfig(
+                    system_instruction=system_prompt,
+                )
+            )
             return response.text
         except Exception as e:
             logger.error(f"Failed to generate LLM response via Gemini: {e}")

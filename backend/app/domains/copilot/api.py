@@ -4,67 +4,52 @@ import time
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.deps import get_current_active_user
-from app.core.rbac import RequirePermissions
 from app.db.session import get_db
-from app.models.user import User
 from app.domains.copilot import schemas
-from app.services.retrieval import retrieval_engine
-from app.services.context import context_builder
-from app.services.llm import llm_provider
+from app.domains.copilot.service import CopilotService
 
 logger = logging.getLogger("IndustrialBrain.Copilot")
 router = APIRouter()
+copilot_service = CopilotService()
 
 @router.post("/chat", response_model=schemas.ChatResponse)
 async def chat_with_copilot(
     request: schemas.ChatRequest,
-    db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(RequirePermissions(["copilot.use"]))
+    db: AsyncSession = Depends(get_db)
 ) -> Any:
     """
     Industrial GraphRAG Endpoint.
-    Takes a natural language query, searches Qdrant for semantic evidence,
-    searches Neo4j for topological evidence, and fuses them via an LLM to generate an answer.
+    Takes a natural language query, extracts entities, searches Neo4j for topological evidence, 
+    and synthesizes via Gemini LLM.
     """
     start_time = time.time()
-    logger.info(f"User {current_user.id} asked Copilot: {request.query}")
+    logger.info(f"Copilot query received: {request.query}")
     
-    org_id = str(current_user.org_id)
+    # 1. Process Query via GraphRAG (LLM + Neo4j)
+    result = await copilot_service.process_query(request.query, "default_session")
     
-    # 1. Hybrid Retrieval
-    semantic_evidence = await retrieval_engine.search_vectors(request.query, org_id)
-    graph_evidence = await retrieval_engine.search_graph(org_id, request.query)
-    
-    # 2. Context Building
-    system_prompt = context_builder.build_system_prompt()
-    context = context_builder.build_context(semantic_evidence, graph_evidence)
-    
-    # 3. LLM Generation
-    answer = await llm_provider.generate_response(system_prompt, context, request.query)
-    
-    # 4. Format Output Citations
+    # 2. Format Output Citations
     citations = []
-    for v in semantic_evidence:
+    for citation_text in result.get("citations", []):
         citations.append(
             schemas.Citation(
-                document_id=v["document_id"] or "unknown",
-                chunk_index=v["chunk_index"] or 0,
-                text_snippet=v["text"][:100] if v["text"] else "",
-                confidence=v["score"]
+                document_id=citation_text,
+                chunk_index=0,
+                text_snippet="",
+                confidence=1.0
             )
         )
         
     g_ev = schemas.GraphEvidence(
-        nodes_traversed=graph_evidence["nodes"],
-        relationships=graph_evidence["edges"]
+        nodes_traversed=[str(result.get("context", {}).get("graph_nodes_traversed", 0))],
+        relationships=result.get("context", {}).get("entities_identified", [])
     )
     
     processing_time_ms = int((time.time() - start_time) * 1000)
     
     return schemas.ChatResponse(
-        answer=answer,
-        confidence_score=0.92, # Simulated LLM confidence
+        answer=result["response"],
+        confidence_score=0.95,
         citations=citations,
         graph_evidence=g_ev,
         processing_time_ms=processing_time_ms

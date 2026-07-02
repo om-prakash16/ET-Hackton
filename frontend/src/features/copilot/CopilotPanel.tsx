@@ -52,54 +52,31 @@ export function CopilotPanel() {
     setMessages(prev => [...prev, initialAssistantMessage]);
 
     try {
-      const response = await fetch('/api/copilot', {
+      const response = await fetch('http://127.0.0.1:8000/api/v1/copilot/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          messages: updatedMessages.map(m => ({ role: m.role, content: m.content })),
-          contextSources: ['OEM_Manuals.pdf', 'Visakhapatnam_Graph', 'Live_Telemetry', 'OISD_Regulations']
+          query: promptText,
+          history: updatedMessages.map(m => ({ role: m.role, content: m.content }))
         })
       });
 
-      if (!response.body) throw new Error('No body in response');
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let done = false;
-      let streamedText = '';
-
-      while (!done) {
-        const { value, done: readerDone } = await reader.read();
-        done = readerDone;
-        if (value) {
-          const chunk = decoder.decode(value, { stream: !done });
-          streamedText += chunk;
-
-          setMessages(prev => {
-            return prev.map(msg => {
-              if (msg.id === assistantMsgId) {
-                // Auto-detect sources from streamed text to add badges dynamically
-                const sources: string[] = [];
-                if (streamedText.toLowerCase().includes('api-610')) sources.push('API-610 Manual');
-                if (streamedText.toLowerCase().includes('oisd-105')) sources.push('OISD-105');
-                if (streamedText.toLowerCase().includes('v-201')) sources.push('V-201 Log');
-                
-                return {
-                  ...msg,
-                  content: streamedText,
-                  sources: sources.length > 0 ? sources : undefined
-                };
-              }
-              return msg;
-            });
-          });
-        }
-      }
+      if (!response.ok) throw new Error('API Error');
+      const data = await response.json();
+      
+      const sources: string[] = data.citations?.map((c: any) => c.document_id) || [];
+      
+      setMessages(prev => prev.map(msg => 
+        msg.id === assistantMsgId 
+          ? { ...msg, content: data.answer, sources: sources.length > 0 ? sources : undefined } 
+          : msg
+      ));
 
       // Check if prompt references assets to populate details panel
       if (promptText.toLowerCase().includes('p-101a') || promptText.toLowerCase().includes('pressure')) {
-        setSelectedCitation('P-101A Mechanical Seal');
+        setSelectedCitation('P-101A');
       } else if (promptText.toLowerCase().includes('oisd') || promptText.toLowerCase().includes('compliance')) {
-        setSelectedCitation('OISD-105 Safety Standards');
+        setSelectedCitation('OISD-105');
       }
 
     } catch (err) {

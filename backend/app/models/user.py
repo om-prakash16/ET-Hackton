@@ -1,45 +1,31 @@
-from sqlalchemy import Column, String, Boolean, DateTime, ForeignKey, Integer, Table
+from sqlalchemy import Column, String, Boolean, DateTime, ForeignKey, Integer, Table, Text, Date, Float
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
+import uuid
+from datetime import datetime
 from app.models.base import Base
 
-# Association Tables for RBAC Many-To-Many
 user_roles = Table(
     "user_roles",
     Base.metadata,
     Column("user_id", UUID(as_uuid=True), ForeignKey("users.id"), primary_key=True),
     Column("role_id", UUID(as_uuid=True), ForeignKey("roles.id"), primary_key=True),
+    Column("plant_id", UUID(as_uuid=True), ForeignKey("plants.id"), nullable=True),
+    Column("department_id", UUID(as_uuid=True), ForeignKey("departments.id"), nullable=True)
 )
-
-role_permissions = Table(
-    "role_permissions",
-    Base.metadata,
-    Column("role_id", UUID(as_uuid=True), ForeignKey("roles.id"), primary_key=True),
-    Column("permission_id", UUID(as_uuid=True), ForeignKey("permissions.id"), primary_key=True),
-)
-
-class Permission(Base):
-    __tablename__ = "permissions"
-    name = Column(String(100), unique=True, nullable=False, index=True) # e.g. "documents.read"
-    description = Column(String(255))
-    roles = relationship("Role", secondary=role_permissions, back_populates="permissions")
-
-class Role(Base):
-    __tablename__ = "roles"
-    name = Column(String(100), unique=True, nullable=False, index=True) # e.g. "Super Admin"
-    description = Column(String(255))
-    org_id = Column(ForeignKey("organizations.id"), nullable=True) # Null for platform roles, set for org-specific
-    
-    users = relationship("User", secondary=user_roles, back_populates="roles")
-    permissions = relationship("Permission", secondary=role_permissions, back_populates="roles")
-
 
 class User(Base):
     __tablename__ = "users"
 
-    org_id = Column(ForeignKey("organizations.id"), nullable=False, index=True)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    org_id = Column(UUID(as_uuid=True), ForeignKey("organizations.id"), nullable=True, index=True)
     email = Column(String(255), unique=True, nullable=False, index=True)
-    password_hash = Column(String(255), nullable=False)
+    password_hash = Column(String(255), nullable=True) # Null for OAuth/SSO
+    
+    first_name = Column(String(100), nullable=True)
+    last_name = Column(String(100), nullable=True)
+    employee_id = Column(String(50), nullable=True, unique=True)
+    phone = Column(String(50), nullable=True)
     
     # Account Security
     is_active = Column(Boolean, default=True)
@@ -49,9 +35,51 @@ class User(Base):
     last_login = Column(DateTime(timezone=True), nullable=True)
     password_changed_at = Column(DateTime(timezone=True), nullable=True)
 
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
     # Relationships
     organization = relationship("Organization", back_populates="users")
     roles = relationship("Role", secondary=user_roles, back_populates="users")
+    profile = relationship("UserProfile", back_populates="user", foreign_keys="[UserProfile.user_id]", uselist=False, cascade="all, delete-orphan")
+    password_history = relationship("PasswordHistory", back_populates="user", cascade="all, delete-orphan")
     sessions = relationship("Session", back_populates="user", cascade="all, delete-orphan")
+    devices = relationship("Device", back_populates="user", cascade="all, delete-orphan")
+    audit_logs = relationship("AuditLog", back_populates="user", cascade="all, delete-orphan")
+    mfa_settings = relationship("MFASettings", back_populates="user", cascade="all, delete-orphan")
     api_keys = relationship("APIKey", back_populates="user", cascade="all, delete-orphan")
-    audit_logs = relationship("AuditLog", back_populates="user")
+
+
+class UserProfile(Base):
+    __tablename__ = "user_profiles"
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), unique=True, nullable=False)
+    
+    profile_picture_url = Column(String(255), nullable=True)
+    date_of_birth = Column(Date, nullable=True)
+    gender = Column(String(50), nullable=True)
+    language = Column(String(50), default="en")
+    timezone = Column(String(50), default="UTC")
+    bio = Column(Text, nullable=True)
+    
+    # Professional Info
+    designation = Column(String(100), nullable=True)
+    reporting_manager_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
+    experience_years = Column(Float, nullable=True)
+    skills = Column(Text, nullable=True) # JSON or CSV
+    certifications = Column(Text, nullable=True)
+    employment_type = Column(String(50), nullable=True)
+    emergency_contact = Column(String(255), nullable=True)
+
+    user = relationship("User", back_populates="profile", foreign_keys=[user_id])
+    reporting_manager = relationship("User", foreign_keys=[reporting_manager_id])
+
+
+class PasswordHistory(Base):
+    __tablename__ = "password_history"
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False, index=True)
+    password_hash = Column(String(255), nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    user = relationship("User", back_populates="password_history")

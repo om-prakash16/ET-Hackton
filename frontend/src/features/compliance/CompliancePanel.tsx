@@ -10,10 +10,47 @@ import ViolationCard from '@/components/ui/ViolationCard';
 export function CompliancePanel() {
   const [isScanning, setIsScanning] = useState(false);
   const [selectedFrameworkId, setSelectedFrameworkId] = useState('frame-2');
+  const [violations, setViolations] = useState<any[]>(MOCK_VIOLATIONS);
+  const [globalScore, setGlobalScore] = useState(85);
 
-  const triggerScan = () => {
+  const triggerScan = async () => {
     setIsScanning(true);
-    setTimeout(() => setIsScanning(false), 2000);
+    
+    try {
+      const response = await fetch('http://127.0.0.1:8000/api/v1/compliance/evaluate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          equipment_tag: 'P-101A',
+          target_regulation: 'OISD-105'
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (data.gaps && data.gaps.length > 0) {
+        setGlobalScore(81);
+        
+        // Map backend gaps to our ViolationCard schema
+        const newViolations = data.gaps.map((gap: any, index: number) => ({
+          id: `live-gap-${index}`,
+          title: gap.description,
+          framework: gap.regulatory_reference,
+          severity: gap.severity.toLowerCase(),
+          asset: data.equipment_tag,
+          date: 'Just now'
+        }));
+        
+        setViolations(newViolations);
+      } else {
+        setGlobalScore(100);
+        setViolations([]);
+      }
+    } catch (error) {
+      console.error("Failed to run compliance scan", error);
+    } finally {
+      setIsScanning(false);
+    }
   };
 
   return (
@@ -55,11 +92,11 @@ export function CompliancePanel() {
             transition={{ delay: 0.1 }}
             className="glass-card p-6 flex flex-col items-center gap-4"
           >
-            <ComplianceGauge score={85} label="Global Score" size={180} />
+            <ComplianceGauge score={globalScore} label="Global Score" size={180} />
             <div className="text-center">
               <h3 className="text-sm font-semibold text-primary">Overall Compliance Score</h3>
               <p className="text-xs mt-1.5 leading-relaxed text-muted">
-                Score degraded by 4% due to missing inspections on secondary containment units.
+                {globalScore < 100 ? `Score degraded by ${100 - globalScore}% due to missing inspections on primary equipment.` : `Fully compliant across active frameworks.`}
               </p>
             </div>
             <div className="flex gap-2 w-full mt-2">
@@ -113,8 +150,8 @@ export function CompliancePanel() {
               <h3 className="text-sm font-semibold text-primary">Detected Violations & Risks</h3>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="badge badge-critical text-[9px]">2 Critical</span>
-              <span className="badge badge-warning text-[9px]">5 Warnings</span>
+              <span className="badge badge-critical text-[9px]">{violations.filter(v => v.severity === 'critical' || v.severity === 'high').length} Critical</span>
+              <span className="badge badge-warning text-[9px]">{violations.filter(v => v.severity === 'warning' || v.severity === 'medium').length} Warnings</span>
             </div>
           </div>
 
@@ -139,9 +176,11 @@ export function CompliancePanel() {
                   animate={{ opacity: 1 }}
                   className="flex flex-col gap-3"
                 >
-                  {MOCK_VIOLATIONS.map((v) => (
+                  {violations.length > 0 ? violations.map((v) => (
                     <ViolationCard key={v.id} violation={v} />
-                  ))}
+                  )) : (
+                    <div className="text-center text-muted text-sm py-10">No violations detected. Equipment is compliant.</div>
+                  )}
                 </motion.div>
               )}
             </AnimatePresence>

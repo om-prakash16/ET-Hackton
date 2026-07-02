@@ -14,6 +14,11 @@ class UserCreate(BaseModel):
     password: str
     org_id: UUID
 
+class OrganizationRegistrationFlow(BaseModel):
+    org_name: str
+    admin_email: EmailStr
+    admin_password: str
+
 class RoleSchema(BaseModel):
     name: str
     
@@ -27,3 +32,31 @@ class UserResponse(BaseModel):
     roles: List[RoleSchema] = []
     
     model_config = ConfigDict(from_attributes=True)
+
+class AccountRegisterRequest(BaseModel):
+    first_name: str
+    last_name: str
+    email: EmailStr
+    password: str
+
+class VerifyEmailRequest(BaseModel):
+    email: EmailStr
+    otp: str
+
+class OrganizationCreateRequest(BaseModel):
+    name: str
+    industry: str
+    company_size: str
+    country: str
+    state: str
+    city: str
+    address: str
+
+class PlantCreateRequest(BaseModel):
+    name: str
+    code: str
+    country: str
+    state: str
+    city: str
+    address: str
+    timezone: str = "UTC"

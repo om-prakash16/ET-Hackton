@@ -7,14 +7,16 @@ from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
-import google.generativeai as genai
+from google import genai
 
 class EmbeddingService:
     def __init__(self):
         self.qdrant = AsyncQdrantClient(url=settings.QDRANT_URL)
         self.vector_size = 768  # Gemini standard dimension
-        if settings.GEMINI_API_KEY:
-            genai.configure(api_key=settings.GEMINI_API_KEY)
+        if settings.AI_API_KEY:
+            self.client = genai.Client(api_key=settings.AI_API_KEY)
+        else:
+            self.client = genai.Client()
         
     async def generate_embeddings(self, texts: List[str]) -> List[List[float]]:
         """
@@ -26,17 +28,16 @@ class EmbeddingService:
         try:
             # We can use embedding-001 or text-embedding-004. Gemini handles batched inputs.
             # Using standard recommended model for embeddings
-            result = genai.embed_content(
-                model="models/text-embedding-004",
-                content=texts,
-                task_type="retrieval_document"
+            # Using the new genai client API
+            result = self.client.models.embed_content(
+                model="text-embedding-004",
+                contents=texts
             )
             
-            # The result could be a dict with 'embedding' or a list if batched
-            if isinstance(result['embedding'], list) and len(result['embedding']) > 0 and isinstance(result['embedding'][0], list):
-                return result['embedding']
-            elif isinstance(result['embedding'], list):
-                return [result['embedding']] # Single embedding
+            # The result from google-genai returns embeddings as a list of objects
+            # depending on the batch
+            if result.embeddings:
+                return [e.values for e in result.embeddings]
             return []
         except Exception as e:
             logger.error(f"Failed to generate embeddings via Gemini: {e}")

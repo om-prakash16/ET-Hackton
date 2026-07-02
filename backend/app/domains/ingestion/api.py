@@ -9,7 +9,7 @@ from app.core.rbac import RequirePermissions
 from app.db.session import get_db
 from app.models.user import User
 from app.models.document import DocumentMetadata
-from app.models.auth import AuditLog
+from app.models.security import AuditLog
 from app.services.storage import save_upload_file
 from app.core.events import event_publisher
 from app.domains.ingestion import schemas

@@ -13,10 +13,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from app.core.config import settings
 from app.models.base import Base
-# Make sure all models are imported so metadata is populated
-from app.models.tenant import Organization, Plant
-from app.models.user import User, Role, Permission
-from app.models.auth import Session, APIKey, AuditLog
+from app.models import *
 from app.models.document import DocumentMetadata
 
 # this is the Alembic Config object, which provides

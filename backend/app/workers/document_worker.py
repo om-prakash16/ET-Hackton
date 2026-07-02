@@ -6,7 +6,7 @@ from sqlalchemy.future import select
 
 from app.core.config import settings
 from app.db.session import AsyncSessionLocal
-from app.models.document import DocumentMetadata
+from app.models.dms import DMSVersion, DMSDocument
 from app.services.parser import get_parser
 from app.services.chunking import SemanticChunker
 from app.services.embeddings import EmbeddingService
@@ -59,15 +59,15 @@ class DocumentPipelineWorker:
                     logger.error(f"Error in consume_loop: {e}")
                 await asyncio.sleep(1)
 
-    async def update_status(self, doc_id: str, status: str):
-        async with async_session_maker() as session:
-            query = select(DocumentMetadata).where(DocumentMetadata.id == doc_id)
+    async def update_status(self, version_id: str, ai_status: str):
+        async with AsyncSessionLocal() as session:
+            query = select(DMSVersion).where(DMSVersion.id == version_id)
             result = await session.execute(query)
-            doc = result.scalars().first()
-            if doc:
-                doc.status = status
+            version = result.scalars().first()
+            if version:
+                version.ai_status = ai_status
                 await session.commit()
-                logger.info(f"Document {doc_id} status changed to {status}")
+                logger.info(f"Version {version_id} ai_status changed to {ai_status}")
 
     async def process_message(self, payload: dict):
         document_id = payload.get("document_id")
@@ -75,12 +75,14 @@ class DocumentPipelineWorker:
         blob_uri = payload.get("blob_uri")
         file_type = payload.get("file_type")
         
-        if not document_id or not blob_uri:
+        version_id = payload.get("version_id")
+        
+        if not document_id or not blob_uri or not version_id:
             logger.error(f"Invalid payload received: {payload}")
             return
             
-        logger.info(f"Worker picked up document {document_id}")
-        await self.update_status(document_id, "PROCESSING")
+        logger.info(f"Worker picked up document {document_id}, version {version_id}")
+        await self.update_status(version_id, "OCR_PROCESSING")
 
         try:
             # 1. Fetch File (simulate downloading from S3 using local proxy)
@@ -102,14 +104,14 @@ class DocumentPipelineWorker:
                 await self.embedder.ingest_chunks(org_id, document_id, chunks)
 
             # 6. Complete
-            await self.update_status(document_id, "READY")
-            logger.info(f"Successfully processed document {document_id}")
+            await self.update_status(version_id, "INDEXED")
+            logger.info(f"Successfully processed version {version_id} for document {document_id}")
             
             # Here we would normally publish `document.completed` to Kafka
             # await event_publisher.publish("document.completed", {"document_id": document_id})
             
         except Exception as e:
-            logger.error(f"Pipeline failed for document {document_id}: {e}")
-            await self.update_status(document_id, "FAILED")
+            logger.error(f"Pipeline failed for version {version_id} of document {document_id}: {e}")
+            await self.update_status(version_id, "FAILED")
 
 pipeline_worker = DocumentPipelineWorker()

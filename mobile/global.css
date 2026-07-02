@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: #070B14;
+    --foreground: #FFFFFF;
+    --card: #111827;
+    --sidebar: #0B1120;
+    --border: #273449;
+    --primary: #3B82F6;
+    --danger: #EF4444;
+    --success: #22C55E;
+    --warning: #F59E0B;
+    --muted: #182234;
+    --muted-foreground: #94A3B8;
+  }
+}
