@@ -3,8 +3,13 @@ import { NextResponse } from "next/server"
 
 export default withAuth(
   function middleware(req) {
-    if (req.nextUrl.pathname === "/admin" || req.nextUrl.pathname === "/admin/") {
-      return NextResponse.redirect(new URL("/admin/dashboard", req.url))
+    const token = req.nextauth.token;
+
+    // Strict RBAC: Only prakash.om.global@gmail.com is allowed in /admin
+    if (req.nextUrl.pathname.startsWith("/admin")) {
+      if (token?.email !== "prakash.om.global@gmail.com") {
+        return NextResponse.redirect(new URL("/login?error=AccessDenied", req.url));
+      }
     }
   },
   {

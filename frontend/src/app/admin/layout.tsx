@@ -2,13 +2,14 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
 import { 
-  Brain, Search, Bell, Settings, LogOut, HelpCircle, User, 
+  Brain, Search, Bell, LogOut, HelpCircle, User, 
   ChevronLeft, ChevronRight, ChevronDown, LayoutDashboard, Building2, Users, 
-  Database, Cpu, Activity, FileText, Menu, Command, Sun, Moon,
-  Shield, Layers, DollarSign, Plug, ShieldAlert
+  Database, Activity, FileText, Menu, Command, Sun, Moon,
+  Shield, Layers, DollarSign, Plug, ShieldAlert, Bot, BookOpen, 
+  ScanText, SearchCode, Link as LinkIcon, BarChart3, Settings, ShieldCheck, History, ListTodo, Save, ToggleLeft, Lightbulb, CheckCircle, Combine, Network
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
@@ -25,31 +26,90 @@ export default function AdminLayout({
   const pathname = usePathname();
   const router = useRouter();
   const { theme, setTheme } = useTheme();
+  const { data: session } = useSession();
 
-  // Top Dashboard Link (Separated as in screenshot)
+  const userEmail = session?.user?.email || "prakash.om.global@gmail.com";
+  const userName = session?.user?.name || "Super Admin";
+  const userInitials = userName.substring(0, 2).toUpperCase();
+
+  // Top Dashboard Link
   const dashboardItem = { label: "Dashboard", icon: LayoutDashboard, href: "/admin", badge: null };
 
-  // PLATFORM Section Items matching user screenshot exactly
+  // PLATFORM Section
   const platformNavItems = [
-    { label: "Organizations", icon: Building2, href: "/admin/organizations", badge: null },
-    { label: "Users", icon: Users, href: "/admin/users", badge: null },
-    { label: "Roles & Permissions", icon: Shield, href: "/admin/roles", badge: null },
-    { label: "Subscriptions", icon: Layers, href: "/admin/subscriptions", badge: null },
-    { label: "Plans & Billing", icon: DollarSign, href: "/admin/billing", badge: null },
-    { label: "Storage & Usage", icon: Database, href: "/admin/storage", badge: null },
-    { label: "AI Center", icon: Cpu, href: "/admin/ai", badge: null },
-    { label: "Integrations", icon: Plug, href: "/admin/integrations", badge: null },
-    { label: "Audit Logs", icon: FileText, href: "/admin/audit", badge: null },
-    { label: "System Monitoring", icon: Activity, href: "/admin/system", badge: null },
+    { label: "Tenant Organizations", icon: Building2, href: "/admin/tenants", badge: null },
+    { label: "Platform Users", icon: Users, href: "/admin/users", badge: null },
+    { label: "Billing & Payments", icon: DollarSign, href: "/admin/billing", badge: null },
+    { label: "Licenses", icon: Shield, href: "/admin/licenses", badge: null },
+    { label: "Storage", icon: Database, href: "/admin/storage", badge: null },
   ];
 
-  // SYSTEM Section Items matching user screenshot exactly
-  const systemNavItems = [
-    { label: "Settings", icon: Settings, href: "/admin/settings", badge: null },
-    { label: "Security Center", icon: ShieldAlert, href: "/admin/security", badge: null },
-    { label: "Notifications", icon: Bell, href: "/admin/notifications", badge: "8" },
-    { label: "Help & Support", icon: HelpCircle, href: "/admin/help", badge: null },
+  // PLATFORM INTEGRATIONS Section
+  const integrationNavItems = [
+    { label: "Integration Hub", icon: Combine, href: "/admin/integration", badge: "CORE" },
+    { label: "API Gateway", icon: Network, href: "/admin/api-gateway", badge: null },
   ];
+
+  // AI CENTER Section
+  const aiCenterNavItems = [
+    { label: "AI Operations Brain", icon: Brain, href: "/admin/ai/brain", badge: "CORE" },
+    { label: "AI Center", icon: Bot, href: "/admin/ai", badge: null },
+    { label: "AI Models", icon: Bot, href: "/admin/ai/models", badge: null },
+    { label: "AI Agents", icon: Bot, href: "/admin/ai/agents", badge: null },
+    { label: "Prompt Library", icon: BookOpen, href: "/admin/ai/prompts", badge: null },
+    { label: "OCR Center", icon: ScanText, href: "/admin/ai/ocr", badge: null },
+    { label: "Knowledge Graph", icon: Network, href: "/admin/ai/knowledge-graph", badge: null },
+    { label: "Vector Database", icon: Database, href: "/admin/ai/vector-database", badge: null },
+    { label: "Search Engine", icon: SearchCode, href: "/admin/ai/search", badge: null },
+  ];
+
+  // SYSTEM & SECURITY Section
+  const systemNavItems = [
+    { label: "Enterprise Governance", icon: ShieldCheck, href: "/admin/governance", badge: "PROD" },
+    { label: "System Health", icon: Activity, href: "/admin/health", badge: null },
+    { label: "Audit Logs", icon: History, href: "/admin/audit", badge: null },
+  ];
+
+  // SETTINGS Section
+  const settingsNavItems = [
+    { label: "System Settings", icon: Settings, href: "/admin/settings", badge: null },
+  ];
+
+  const renderNavSection = (title: string, items: typeof platformNavItems) => (
+    <div className="space-y-1 pt-1">
+      {!isCollapsed && (
+        <div className="px-3 mb-2 mt-4 text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">
+          {title}
+        </div>
+      )}
+      {items.map((item) => {
+        const isActive = pathname === item.href || (item.href !== "/admin" && pathname?.startsWith(`${item.href}`));
+        return (
+          <Link
+            key={item.label}
+            href={item.href}
+            className={`flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-semibold transition-all group relative overflow-hidden ${
+              isActive 
+                ? "bg-blue-600/15 text-blue-400 border border-blue-500/30 font-bold" 
+                : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200"
+            }`}
+            title={isCollapsed ? item.label : undefined}
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            <div className="flex items-center gap-3 min-w-0">
+              <item.icon className={`w-4 h-4 shrink-0 ${isActive ? "text-blue-400" : "text-slate-500 group-hover:text-slate-300"}`} />
+              {!isCollapsed && <span className="truncate">{item.label}</span>}
+            </div>
+            {!isCollapsed && item.badge && (
+              <span className={`text-white font-extrabold text-[10px] px-1.5 py-0.2 rounded-full min-w-[18px] text-center shadow-sm ${item.badge === '8' ? 'bg-red-500 animate-pulse' : 'bg-blue-500'}`}>
+                {item.badge}
+              </span>
+            )}
+          </Link>
+        );
+      })}
+    </div>
+  );
 
   return (
     <div className="flex h-screen w-full bg-[#0a0f1d] overflow-hidden text-slate-100 font-sans">
@@ -106,9 +166,9 @@ export default function AdminLayout({
         )}
 
         {/* Main Navigation Scroll Area */}
-        <div className="flex-1 overflow-y-auto px-3 py-2 space-y-5 scrollbar-thin scrollbar-thumb-slate-800">
+        <div className="flex-1 overflow-y-auto px-3 py-2 pb-6 space-y-2 scrollbar-thin scrollbar-thumb-slate-800">
           
-          {/* Top Dashboard Button (Separated from PLATFORM list as in screenshot) */}
+          {/* Top Dashboard Button */}
           <div>
             {(() => {
               const isDashActive = pathname === "/admin";
@@ -121,6 +181,7 @@ export default function AdminLayout({
                       : "text-slate-300 hover:bg-slate-800/60 hover:text-white"
                   }`}
                   title={isCollapsed ? "Dashboard" : undefined}
+                  onClick={() => setIsMobileMenuOpen(false)}
                 >
                   <LayoutDashboard className={`w-4 h-4 shrink-0 ${isDashActive ? "text-white" : "text-blue-400 group-hover:text-blue-300"}`} />
                   {!isCollapsed && <span className="flex-1 truncate">Dashboard</span>}
@@ -129,77 +190,14 @@ export default function AdminLayout({
             })()}
           </div>
 
-          {/* PLATFORM SECTION */}
-          <div className="space-y-1">
-            {!isCollapsed && (
-              <div className="px-3 mb-2 text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">
-                PLATFORM
-              </div>
-            )}
-            {platformNavItems.map((item) => {
-              const isActive = pathname === item.href || (item.href !== "/admin" && pathname?.startsWith(`${item.href}`));
-              return (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  className={`flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-semibold transition-all group relative overflow-hidden ${
-                    isActive 
-                      ? "bg-blue-600/15 text-blue-400 border border-blue-500/30 font-bold" 
-                      : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200"
-                  }`}
-                  title={isCollapsed ? item.label : undefined}
-                >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <item.icon className={`w-4 h-4 shrink-0 ${isActive ? "text-blue-400" : "text-slate-500 group-hover:text-slate-300"}`} />
-                    {!isCollapsed && <span className="truncate">{item.label}</span>}
-                  </div>
-                  {!isCollapsed && item.badge && (
-                    <span className="bg-red-500 text-white font-extrabold text-[10px] px-1.5 py-0.2 rounded-full min-w-[18px] text-center shadow-sm">
-                      {item.badge}
-                    </span>
-                  )}
-                </Link>
-              );
-            })}
-          </div>
+          {renderNavSection("PLATFORM", platformNavItems)}
+          {renderNavSection("AI CENTER", aiCenterNavItems)}
+          {renderNavSection("SYSTEM & SECURITY", systemNavItems)}
 
-          {/* SYSTEM SECTION */}
-          <div className="space-y-1 pt-1">
-            {!isCollapsed && (
-              <div className="px-3 mb-2 text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">
-                SYSTEM
-              </div>
-            )}
-            {systemNavItems.map((item) => {
-              const isActive = pathname === item.href || pathname?.startsWith(`${item.href}`);
-              return (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  className={`flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-semibold transition-all group relative overflow-hidden ${
-                    isActive 
-                      ? "bg-blue-600/15 text-blue-400 border border-blue-500/30 font-bold" 
-                      : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200"
-                  }`}
-                  title={isCollapsed ? item.label : undefined}
-                >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <item.icon className={`w-4 h-4 shrink-0 ${isActive ? "text-blue-400" : "text-slate-500 group-hover:text-slate-300"}`} />
-                    {!isCollapsed && <span className="truncate">{item.label}</span>}
-                  </div>
-                  {!isCollapsed && item.badge && (
-                    <span className="bg-red-500 text-white font-extrabold text-[10px] px-1.5 py-0.5 rounded-full min-w-[18px] text-center shadow-md animate-pulse">
-                      {item.badge}
-                    </span>
-                  )}
-                </Link>
-              );
-            })}
-          </div>
+          {renderNavSection("SETTINGS", settingsNavItems)}
 
         </div>
 
-        {/* User Profile Footer (matching screenshot: SA | Super Admin | superadmin@indusbrain.ai) */}
         <div className="p-3 border-t border-slate-800/80 shrink-0 bg-[#0a0f1d]/50">
           <div 
             onClick={() => setIsProfileOpen(!isProfileOpen)}
@@ -207,12 +205,12 @@ export default function AdminLayout({
           >
             <div className="flex items-center gap-3 min-w-0">
               <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center shrink-0 shadow-md shadow-blue-600/30 font-bold text-xs text-white border border-blue-400/30">
-                SA
+                {userInitials}
               </div>
               {!isCollapsed && (
                 <div className="flex-1 min-w-0 flex flex-col text-left">
-                  <span className="text-xs font-bold text-white truncate group-hover:text-blue-400 transition-colors">Super Admin</span>
-                  <span className="text-[10px] text-slate-400 truncate">superadmin@indusbrain.ai</span>
+                  <span className="text-xs font-bold text-white truncate group-hover:text-blue-400 transition-colors">{userName}</span>
+                  <span className="text-[10px] text-slate-400 truncate">{userEmail}</span>
                 </div>
               )}
             </div>
@@ -227,8 +225,8 @@ export default function AdminLayout({
               <div className="fixed inset-0 z-40" onClick={() => setIsProfileOpen(false)} />
               <div className="absolute bottom-16 left-3 right-3 bg-[#131b2e] border border-slate-700 rounded-xl shadow-2xl z-50 overflow-hidden text-xs animate-in fade-in slide-in-from-bottom-2 duration-200">
                 <div className="px-4 py-3 border-b border-slate-800 bg-[#0b101d]">
-                  <p className="font-bold text-white">Super Admin</p>
-                  <p className="text-[11px] text-blue-400 truncate mt-0.5">superadmin@indusbrain.ai</p>
+                  <p className="font-bold text-white">{userName}</p>
+                  <p className="text-[11px] text-blue-400 truncate mt-0.5">{userEmail}</p>
                 </div>
                 <div className="py-1">
                   <Link 
@@ -324,7 +322,7 @@ export default function AdminLayout({
               className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center font-bold text-xs text-white shadow-md shadow-blue-600/30 cursor-pointer border border-blue-400/30 hover:scale-105 transition-transform"
               title="Super Admin Profile"
             >
-              SA
+              {userInitials}
             </div>
           </div>
         </header>

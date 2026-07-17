@@ -251,7 +251,7 @@ export function MaintenancePanel() {
                             {rec.urgency}
                           </span>
                         </div>
-                        <p className="text-xs text-secondary leading-relaxed pl-8">{rec.desc}</p>
+                        <p className="text-xs text-muted-foreground leading-relaxed pl-8">{rec.desc}</p>
                       </div>
                     ))}
                     <button className="btn-primary flex items-center justify-center gap-2 mt-2 py-2.5 text-xs font-semibold">
@@ -268,3 +268,4 @@ export function MaintenancePanel() {
     </div>
   );
 }
+

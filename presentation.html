@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IndusBrain - Pitch Deck</title>
+  
+  <!-- Reveal.js Core CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reset.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css">
+  
+  <!-- Theme: Dark Cyberpunk / Industrial -->
+  <style>
+    :root {
+      --r-background-color: #09090b;
+      --r-main-font: 'Inter', sans-serif;
+      --r-main-color: #ffffff;
+      --r-heading-color: #22d3ee;
+      --r-heading-font: 'Inter', sans-serif;
+      --r-heading-text-transform: none;
+      --r-selection-background-color: #22d3ee;
+      --r-selection-color: #000;
+    }
+    .reveal { font-family: var(--r-main-font); font-size: 32px; font-weight: normal; color: var(--r-main-color); }
+    .reveal h1, .reveal h2, .reveal h3 { font-family: var(--r-heading-font); color: var(--r-heading-color); font-weight: 700; text-transform: none; text-shadow: 0 0 20px rgba(34, 211, 238, 0.2); margin-bottom: 20px; }
+    
+    .glass-card {
+      background: #121214;
+      border: 1px solid #1e293b;
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 0 0 30px rgba(6, 182, 212, 0.1);
+    }
+    
+    .accent-green { color: #34d399 !important; }
+    .accent-red { color: #f87171 !important; text-shadow: 0 0 20px rgba(248, 113, 113, 0.2) !important;}
+    .accent-gold { color: #fbbf24 !important; text-shadow: 0 0 20px rgba(251, 191, 36, 0.2) !important;}
+    
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+    
+    .metric-card {
+      background: #1e1e24;
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+      transition: transform 0.3s;
+    }
+    .metric-card:hover { transform: translateY(-10px); }
+    .metric-card h1 { font-size: 4rem; margin: 0; color: #34d399; }
+    .metric-card p { font-size: 1.1rem; color: #cbd5e1; margin-top: 10px; }
+
+    .problem-box {
+      background: #1e1e24;
+      padding: 25px;
+      border-radius: 12px;
+      border-left: 5px solid #ef4444;
+      text-align: left;
+    }
+    
+    .list-item { margin-bottom: 20px; text-align: left; font-size: 1.2rem; line-height: 1.6; color: #cbd5e1; }
+    
+    /* Mermaid Diagram Style override */
+    .mermaid { background: transparent; }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- SLIDE 1: TITLE (Animates in) -->
+      <section data-transition="zoom" data-background-color="#09090b">
+        <div class="glass-card">
+          <!-- Note: Assuming logo.png is served or replaced by user. Using a glowing text fallback -->
+          <h1 style="font-size: 4.5rem; margin-bottom: 0;">IndusBrain</h1>
+          <h3 style="color: #94a3b8; font-size: 2rem; margin-top: 10px;" class="fragment fade-up">The Multi-Tenant Industrial AI OS</h3>
+          <p class="accent-green fragment fade-up" style="font-weight: bold; font-size: 1.3rem; margin-top: 40px;">
+            Eliminating Downtime with Agentic GraphRAG
+          </p>
+        </div>
+      </section>
+
+      <!-- SLIDE 2: THE PROBLEM -->
+      <section data-transition="slide" data-background-color="#09090b">
+        <h2>1. The Industrial Problem</h2>
+        <div class="grid-2" style="margin-top: 40px;">
+          <div class="problem-box fragment fade-right">
+            <h3 class="accent-red">Data Silos</h3>
+            <p style="font-size: 1.1rem; color: #cbd5e1;">P&IDs are in AutoCAD, maintenance logs in SAP, and OEM manuals in 400-page PDF archives. They don't talk to each other.</p>
+          </div>
+          <div class="problem-box fragment fade-left">
+            <h3 class="accent-red">Information Retrieval</h3>
+            <p style="font-size: 1.1rem; color: #cbd5e1;">A 2024 McKinsey survey found that professionals in asset-intensive industries spend <b>35%</b> of their time just searching for information.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 3: THE SOLUTION -->
+      <section data-transition="convex" data-background-color="#09090b">
+        <h2 class="accent-green">2. The IndusBrain Solution</h2>
+        <div class="glass-card" style="margin-top: 30px;">
+          <ul>
+            <li class="list-item fragment fade-up">🧠 <b>Universal Document Ingestion:</b> Automatically parses PDFs, DWGs, and Excel logs via OCR.</li>
+            <li class="list-item fragment fade-up">🕸️ <b>Active Knowledge Graph:</b> Extracts entities and links them. (e.g., understands Pump P-101 is physically connected to Valve V-200).</li>
+            <li class="list-item fragment fade-up">🤖 <b>Role-Based AI Copilots:</b> Context-aware AI assistants that answer questions instantly, with strict 100% citation to original documents.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- SLIDE 4: ARCHITECTURE -->
+      <section data-transition="fade" data-background-color="#09090b">
+        <h2>3. Architecture (B2B SaaS)</h2>
+        <div class="fragment fade-in">
+          <div class="mermaid" style="font-size: 1.2rem; background: #121214; padding: 20px; border-radius: 12px; border: 1px solid #1e293b;">
+            graph TD
+              A[Tenant A: Tata Steel] -->|JWT Auth| B(Next.js React Frontend)
+              B --> C{FastAPI Backend}
+              C -->|Orchestrator| D[Google Gemini Flash 2.5]
+              C -->|Vector Similarity| E[(Qdrant Vector DB)]
+              C -->|Topology Traversal| F[(Neo4j Graph DB)]
+              D -.->|GraphRAG Synthesis| C
+              style A fill:#1e1e24,stroke:#334155,color:#fff
+              style B fill:#1e1e24,stroke:#334155,color:#fff
+              style C fill:#1e1e24,stroke:#334155,color:#fff
+              style D fill:#0f172a,stroke:#22d3ee,color:#22d3ee,stroke-width:2px
+              style E fill:#064e3b,stroke:#34d399,color:#34d399,stroke-width:2px
+              style F fill:#064e3b,stroke:#34d399,color:#34d399,stroke-width:2px
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 5: GRAPHRAG VS RAG -->
+      <section data-transition="slide" data-background-color="#09090b">
+        <h2 class="accent-gold">4. Why We Win</h2>
+        <div class="grid-2" style="margin-top: 40px;">
+          <div class="glass-card fragment fade-up" style="border-color: #ef4444;">
+            <h3 style="color: #94a3b8; font-size: 1.5rem;">❌ Standard RAG</h3>
+            <p style="font-size: 1.1rem; color: #cbd5e1; text-align: left;">Uses basic keyword/vector matching. Cannot answer complex topological questions like <i>"If this pump fails, what downstream tank overflows?"</i></p>
+          </div>
+          <div class="glass-card fragment fade-up" style="border-color: #34d399; background: rgba(16, 185, 129, 0.05);">
+            <h3 class="accent-green" style="font-size: 1.5rem;">✅ Agentic GraphRAG</h3>
+            <p style="font-size: 1.1rem; color: #cbd5e1; text-align: left;">Combines Vector Similarity with Graph Network analysis. The AI acts as an autonomous agent that navigates the digital twin of the factory.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 6: PRODUCT ROADMAP -->
+      <section data-transition="convex" data-background-color="#09090b">
+        <h2 class="accent-cyan">5. Roadmap: Flutter Mobile App</h2>
+        <div class="glass-card" style="margin-top: 30px;">
+          <h3 class="fragment fade-up text-left" style="color: #f8fafc; font-size: 1.5rem;">Empowering the "Deskless" Worker</h3>
+          <p class="fragment fade-up" style="color: #cbd5e1; text-align: left; font-size: 1.2rem; margin-bottom: 30px;">Phase 2 introduces a cross-platform (iOS/Android) mobile interface for field engineers.</p>
+          
+          <ul style="list-style-type: none; padding-left: 0;">
+            <li class="list-item fragment fade-left">📱 <b>Scan QR Codes:</b> Scan a physical pump to instantly load its context into the Agentic AI Copilot.</li>
+            <li class="list-item fragment fade-left">📸 <b>Photographic Evidence:</b> Snap a picture of a leaking valve to trigger an automated Root Cause Analysis instantly.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- SLIDE 7: ROI -->
+      <section data-transition="zoom" data-background-color="#09090b">
+        <h2>6. Business ROI</h2>
+        <div class="grid-3" style="margin-top: 40px;">
+          <div class="metric-card fragment zoom-in">
+            <h1>-90%</h1>
+            <p>Time-to-Resolution for Root Cause Analysis</p>
+          </div>
+          <div class="metric-card fragment zoom-in" data-fragment-index="1">
+            <h1>100%</h1>
+            <p>Automated OISD & Factory Act Compliance</p>
+          </div>
+          <div class="metric-card fragment zoom-in" data-fragment-index="2">
+            <h1>0</h1>
+            <p>Data Leaks thanks to strict Multi-Tenant RBAC Security</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 8: CONCLUSION -->
+      <section data-transition="fade" data-background-color="#09090b">
+        <div class="glass-card">
+          <h1 style="font-size: 4rem;">Thank You!</h1>
+          <p class="accent-green" style="font-size: 1.5rem; margin-top: 20px;">Ready for the Demo 🚀</p>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- Reveal.js Core JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.js"></script>
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+    Reveal.initialize({
+      hash: true,
+      transition: 'slide', // none/fade/slide/convex/concave/zoom
+      backgroundTransition: 'fade',
+      center: true,
+      controls: true,
+      progress: true
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+{
+  "maintenance_records": [
+    {
+      "work_order_id": "WO-99201",
+      "asset_id": "P-101A",
+      "date": "2023-10-02",
+      "technician": "Ramesh Kumar",
+      "action_taken": "Routine flush and seal inspection",
+      "materials_used": ["Type-B flushing fluid", "O-ring set"],
+      "notes": "Seal looked slightly worn, applied Type-B fluid for high temp operations. Scheduled next check in 6 months."
+    },
+    {
+      "work_order_id": "WO-99412",
+      "asset_id": "T-400",
+      "date": "2023-02-15",
+      "technician": "Suresh P.",
+      "action_taken": "Secondary containment inspection",
+      "materials_used": [],
+      "notes": "Passed visual inspection. Next inspection due by August 2023."
+    }
+  ]
+}

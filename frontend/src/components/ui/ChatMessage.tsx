@@ -22,7 +22,7 @@ export default function ChatMessage({ message }: ChatMessageProps) {
       if (part.startsWith('```') && part.endsWith('```')) {
         const code = part.slice(3, -3).replace(/^[a-zA-Z]+\n/, ''); // Strip lang spec
         return (
-          <pre key={index} className="bg-void p-3 rounded-lg border border-subtle font-mono text-xs my-2 overflow-x-auto text-secondary">
+          <pre key={index} className="bg-void p-3 rounded-lg border border-subtle font-mono text-xs my-2 overflow-x-auto text-muted-foreground">
             <code>{code}</code>
           </pre>
         );
@@ -93,3 +93,4 @@ export default function ChatMessage({ message }: ChatMessageProps) {
     </motion.div>
   );
 }
+

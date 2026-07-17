@@ -52,7 +52,7 @@ export default function RCATree({ symptom, probableCause, rootCause }: RCATreePr
           <span className="text-[10px] font-bold tracking-widest text-muted uppercase">Symptom Detected</span>
         </div>
         <h4 className="text-sm font-semibold text-primary">{symptom.title}</h4>
-        <p className="text-xs text-secondary mt-1">{symptom.description}</p>
+        <p className="text-xs text-muted-foreground mt-1">{symptom.description}</p>
         <div className="flex flex-wrap gap-1 mt-2.5">
           {symptom.evidence.map(ev => (
             <span key={ev} className="px-2 py-0.5 rounded text-[9px] font-semibold badge-info uppercase">{ev}</span>
@@ -78,7 +78,7 @@ export default function RCATree({ symptom, probableCause, rootCause }: RCATreePr
           <span className="badge badge-warning text-[9px] font-mono">{probableCause.confidence}% confidence</span>
         </div>
         <h4 className="text-sm font-semibold text-primary">{probableCause.title}</h4>
-        <p className="text-xs text-secondary mt-1">{probableCause.description}</p>
+        <p className="text-xs text-muted-foreground mt-1">{probableCause.description}</p>
         <div className="flex flex-wrap gap-1 mt-2.5">
           {probableCause.evidence.map(ev => (
             <span key={ev} className="px-2 py-0.5 rounded text-[9px] font-semibold badge-info uppercase">{ev}</span>
@@ -101,7 +101,7 @@ export default function RCATree({ symptom, probableCause, rootCause }: RCATreePr
           <span className="text-[10px] font-bold tracking-widest text-muted uppercase">Root Cause Identified</span>
         </div>
         <h4 className="text-sm font-semibold text-primary">{rootCause.title}</h4>
-        <p className="text-xs text-secondary mt-1">{rootCause.description}</p>
+        <p className="text-xs text-muted-foreground mt-1">{rootCause.description}</p>
         <div className="flex flex-wrap gap-1 mt-2.5">
           {rootCause.evidence.map(ev => (
             <span key={ev} className="px-2 py-0.5 rounded text-[9px] font-semibold badge-info uppercase">{ev}</span>
@@ -111,3 +111,4 @@ export default function RCATree({ symptom, probableCause, rootCause }: RCATreePr
     </div>
   );
 }
+

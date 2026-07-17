@@ -71,11 +71,16 @@ export default function LoginPage() {
       }
     }
 
-    const emailPrefix = email.split('@')[0].toLowerCase();
-    const validRoles = ["admin", "plant", "operations", "maintenance-manager", "maintenance", "reliability", "quality-manager", "quality", "safety", "production", "technician", "auditor", "contractor", "viewer"];
-    const role = validRoles.includes(emailPrefix) ? emailPrefix : "admin";
+    let targetUrl = "";
+    if (email.toLowerCase() === "prakash.om.global@gmail.com") {
+      targetUrl = "/admin";
+    } else {
+      const emailPrefix = email.split('@')[0].toLowerCase();
+      const validRoles = ["admin", "plant", "operations", "maintenance-manager", "maintenance", "reliability", "quality-manager", "quality", "safety", "production", "technician", "auditor", "contractor", "viewer"];
+      const role = validRoles.includes(emailPrefix) ? emailPrefix : "admin";
+      targetUrl = `/workspace/${role}/dashboard`;
+    }
 
-    const targetUrl = role === "admin" ? "/admin/dashboard" : `/workspace/${role}/dashboard`;
     await signIn("credentials", { email, password, callbackUrl: targetUrl });
     setIsLoading(false);
   };

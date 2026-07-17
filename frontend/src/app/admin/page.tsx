@@ -2,50 +2,56 @@ import React from "react";
 import { 
   Building2, Users, Database, Cpu, Activity, FileText, 
   TrendingUp, AlertCircle, CheckCircle2, ShieldAlert,
-  Server, HardDrive, Zap, Network, ArrowUpRight
+  Server, HardDrive, Zap, Network, ArrowUpRight, Plus,
+  CreditCard, CheckCircle, PauseCircle, Ticket, Radio, Bot, ListRestart, Link as LinkIcon, History
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 export default function SuperAdminDashboard() {
   return (
-    <div className="space-y-8 animate-fade-in-up">
+    <div className="space-y-8 animate-fade-in-up p-4 lg:p-8">
       
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold tracking-tight text-foreground">Platform Overview</h1>
-          <p className="text-sm text-muted-foreground mt-1">Super admin control center for IndusBrain AI.</p>
+          <h1 className="text-2xl lg:text-3xl font-bold tracking-tight text-foreground">Platform Control Center</h1>
+          <p className="text-sm text-muted-foreground mt-1">Super Admin overview of infrastructure, AI, and organization health.</p>
         </div>
         <div className="flex items-center gap-3">
           <Badge variant="outline" className="bg-success/10 text-success border-success/20 px-3 py-1">
             <span className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-success animate-pulse"></span>
-              All Systems Operational
+              Platform Availability: 99.99%
             </span>
           </Badge>
           <span className="text-xs text-muted-foreground font-mono bg-muted px-2 py-1 rounded">v2.4.0-enterprise</span>
         </div>
       </div>
 
-      {/* KPI Cards Grid */}
+      {/* KPI Cards Grid - Business Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="hover:border-primary/50 transition-all duration-300 relative overflow-hidden group">
           <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
             <Building2 className="w-16 h-16 text-primary" />
           </div>
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Active Organizations</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Total Organizations</CardTitle>
             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
               <Building2 className="w-4 h-4 text-primary" />
             </div>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-foreground">248</div>
-            <p className="text-xs text-success flex items-center gap-1 mt-1">
-              <TrendingUp className="w-3 h-3" />
-              +12 this month
-            </p>
+            <div className="flex items-center gap-4 mt-2">
+              <p className="text-xs text-warning flex items-center gap-1">
+                12 Pending
+              </p>
+              <p className="text-xs text-danger flex items-center gap-1">
+                3 Rejected
+              </p>
+            </div>
           </CardContent>
         </Card>
 
@@ -54,53 +60,102 @@ export default function SuperAdminDashboard() {
             <Users className="w-16 h-16 text-info" />
           </div>
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total Users</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Platform Users</CardTitle>
             <div className="w-8 h-8 rounded-lg bg-info/10 flex items-center justify-center">
               <Users className="w-4 h-4 text-info" />
             </div>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-foreground">12,492</div>
-            <p className="text-xs text-success flex items-center gap-1 mt-1">
+            <p className="text-xs text-success flex items-center gap-1 mt-2">
               <TrendingUp className="w-3 h-3" />
               +840 this week
             </p>
           </CardContent>
         </Card>
 
-        <Card className="hover:border-accent/50 transition-all duration-300 relative overflow-hidden group">
+        <Card className="hover:border-emerald-500/50 transition-all duration-300 relative overflow-hidden group">
           <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-            <Cpu className="w-16 h-16 text-accent" />
+            <CreditCard className="w-16 h-16 text-emerald-500" />
           </div>
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium text-muted-foreground">AI Token Usage</CardTitle>
-            <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center">
-              <Cpu className="w-4 h-4 text-accent" />
+            <CardTitle className="text-sm font-medium text-muted-foreground">Monthly Revenue (MRR)</CardTitle>
+            <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+              <CreditCard className="w-4 h-4 text-emerald-500" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-foreground">42.8M</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              Last 30 days
+            <div className="text-3xl font-bold text-foreground">$485.2k</div>
+            <p className="text-xs text-muted-foreground mt-2 flex items-center gap-2">
+              <span>184 Active Subs</span>
+              <span className="w-1 h-1 rounded-full bg-border"></span>
+              <span>12k Licenses</span>
             </p>
           </CardContent>
         </Card>
 
         <Card className="hover:border-warning/50 transition-all duration-300 relative overflow-hidden group">
           <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-            <Database className="w-16 h-16 text-warning" />
+            <HardDrive className="w-16 h-16 text-warning" />
           </div>
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Knowledge Graph</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Storage Usage</CardTitle>
             <div className="w-8 h-8 rounded-lg bg-warning/10 flex items-center justify-center">
-              <Database className="w-4 h-4 text-warning" />
+              <HardDrive className="w-4 h-4 text-warning" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-foreground">1.2B</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              Edges & Nodes
+            <div className="text-3xl font-bold text-foreground">142 TB</div>
+            <p className="text-xs text-muted-foreground mt-2">
+              Global Platform Allocation
             </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* KPI Cards Grid - System & AI Metrics */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="border-border">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm text-muted-foreground flex items-center gap-2">
+              <Cpu className="w-4 h-4 text-accent" /> Platform AI Requests
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-foreground">42.8M <span className="text-sm text-muted-foreground font-normal">/mo</span></div>
+          </CardContent>
+        </Card>
+        
+        <Card className="border-border">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm text-muted-foreground flex items-center gap-2">
+              <Network className="w-4 h-4 text-info" /> Knowledge Graph
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-foreground">1.2B <span className="text-sm text-muted-foreground font-normal">Nodes</span></div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-border">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm text-muted-foreground flex items-center gap-2">
+              <LinkIcon className="w-4 h-4 text-primary" /> Global API Requests
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-foreground">184M <span className="text-sm text-muted-foreground font-normal">/day</span></div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-border">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm text-muted-foreground flex items-center gap-2">
+              <ShieldAlert className="w-4 h-4 text-danger" /> Security Alerts
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-foreground">4 <span className="text-sm text-muted-foreground font-normal">Active</span></div>
           </CardContent>
         </Card>
       </div>
@@ -113,94 +168,73 @@ export default function SuperAdminDashboard() {
           
           {/* AI Processing Queue (Glass Panel) */}
           <Card className="glass border-border/50">
-            <CardHeader className="border-b border-border/50 pb-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <Activity className="w-5 h-5 text-primary" /> 
-                    Live AI Processing Pipeline
-                  </CardTitle>
-                  <p className="text-xs text-muted-foreground mt-1">Real-time status of OCR and Embedding queues.</p>
-                </div>
-                <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse mr-2"></span>
-                  Processing
-                </Badge>
+            <CardHeader className="border-b border-border/50 pb-4 flex flex-row items-center justify-between">
+              <div>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Activity className="w-5 h-5 text-primary" /> 
+                  Live Background Queues
+                </CardTitle>
+                <CardDescription>Real-time status of OCR, Embedding, and Background Jobs.</CardDescription>
               </div>
+              <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
+                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse mr-2"></span>
+                Processing
+              </Badge>
             </CardHeader>
             <CardContent className="p-0">
               <div className="divide-y divide-border/50">
-                {/* Item 1 */}
+                {/* OCR Jobs */}
                 <div className="p-4 flex items-center justify-between hover:bg-muted/30 transition-colors">
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center border border-border">
                       <FileText className="w-5 h-5 text-muted-foreground" />
                     </div>
                     <div>
-                      <div className="text-sm font-semibold text-foreground">Piping & Instrumentation Diagram (P&ID)</div>
+                      <div className="text-sm font-semibold text-foreground">OCR Jobs Queue</div>
                       <div className="text-xs text-muted-foreground flex items-center gap-2 mt-0.5">
-                        <span>Org: Reliance Industries</span>
+                        <span>45,290 Documents Pending</span>
                         <span className="w-1 h-1 rounded-full bg-border"></span>
-                        <span className="text-warning">Running OCR</span>
+                        <span className="text-warning">High Load</span>
                       </div>
                     </div>
                   </div>
-                  <div className="flex flex-col items-end gap-2 w-32">
-                    <span className="text-xs font-mono">68%</span>
-                    <div className="w-full h-1.5 bg-secondary rounded-full overflow-hidden">
-                      <div className="h-full bg-warning w-[68%] rounded-full relative">
-                        <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
-                      </div>
-                    </div>
-                  </div>
+                  <Button variant="outline" size="sm" className="h-8 text-xs">Manage Queue</Button>
                 </div>
 
-                {/* Item 2 */}
+                {/* Embedding Queue */}
                 <div className="p-4 flex items-center justify-between hover:bg-muted/30 transition-colors">
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center border border-border">
-                      <HardDrive className="w-5 h-5 text-muted-foreground" />
+                      <Database className="w-5 h-5 text-muted-foreground" />
                     </div>
                     <div>
-                      <div className="text-sm font-semibold text-foreground">Historical Maintenance Logs (1998-2023)</div>
+                      <div className="text-sm font-semibold text-foreground">Vector Embedding Queue</div>
                       <div className="text-xs text-muted-foreground flex items-center gap-2 mt-0.5">
-                        <span>Org: Tata Steel</span>
+                        <span>12.4M Chunks</span>
                         <span className="w-1 h-1 rounded-full bg-border"></span>
-                        <span className="text-primary">Generating Embeddings</span>
+                        <span className="text-primary">Processing Normally</span>
                       </div>
                     </div>
                   </div>
-                  <div className="flex flex-col items-end gap-2 w-32">
-                    <span className="text-xs font-mono">92%</span>
-                    <div className="w-full h-1.5 bg-secondary rounded-full overflow-hidden">
-                      <div className="h-full bg-primary w-[92%] rounded-full relative">
-                        <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
-                      </div>
-                    </div>
-                  </div>
+                  <Button variant="outline" size="sm" className="h-8 text-xs">Manage Queue</Button>
                 </div>
 
-                {/* Item 3 */}
+                {/* Background Jobs */}
                 <div className="p-4 flex items-center justify-between hover:bg-muted/30 transition-colors">
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center border border-border">
-                      <Network className="w-5 h-5 text-muted-foreground" />
+                      <History className="w-5 h-5 text-muted-foreground" />
                     </div>
                     <div>
-                      <div className="text-sm font-semibold text-foreground">Asset Hierarchy Sync</div>
+                      <div className="text-sm font-semibold text-foreground">General Background Jobs</div>
                       <div className="text-xs text-muted-foreground flex items-center gap-2 mt-0.5">
-                        <span>Org: Adani Power</span>
+                        <span>Sync, Backup, Reporting</span>
                         <span className="w-1 h-1 rounded-full bg-border"></span>
-                        <span className="text-success flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> Completed</span>
+                        <span className="text-success">Healthy</span>
                       </div>
                     </div>
                   </div>
-                  <div className="flex flex-col items-end gap-2 w-32">
-                    <span className="text-xs font-mono text-success">100%</span>
-                    <div className="w-full h-1.5 bg-secondary rounded-full overflow-hidden">
-                      <div className="h-full bg-success w-full rounded-full"></div>
-                    </div>
-                  </div>
+                  <Button variant="outline" size="sm" className="h-8 text-xs">View Jobs</Button>
                 </div>
               </div>
             </CardContent>
@@ -209,7 +243,7 @@ export default function SuperAdminDashboard() {
           {/* Infrastructure Health */}
           <Card className="border-border">
             <CardHeader className="border-b border-border/50">
-              <CardTitle className="text-lg">Infrastructure Health</CardTitle>
+              <CardTitle className="text-lg">System Health & Monitoring</CardTitle>
             </CardHeader>
             <CardContent className="p-6">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
@@ -224,20 +258,20 @@ export default function SuperAdminDashboard() {
                 </div>
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground flex items-center gap-2"><HardDrive className="w-4 h-4" /> Storage</span>
-                    <span className="font-mono text-primary">42%</span>
+                    <span className="text-muted-foreground flex items-center gap-2"><Server className="w-4 h-4" /> Database (PostgreSQL)</span>
+                    <span className="font-mono text-primary">62%</span>
                   </div>
                   <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
-                    <div className="h-full bg-primary w-[42%] rounded-full"></div>
+                    <div className="h-full bg-primary w-[62%] rounded-full"></div>
                   </div>
                 </div>
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground flex items-center gap-2"><Zap className="w-4 h-4" /> API Rate Limits</span>
-                    <span className="font-mono text-success">12%</span>
+                    <span className="text-muted-foreground flex items-center gap-2"><Zap className="w-4 h-4" /> Redis Cache</span>
+                    <span className="font-mono text-success">34%</span>
                   </div>
                   <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
-                    <div className="h-full bg-success w-[12%] rounded-full"></div>
+                    <div className="h-full bg-success w-[34%] rounded-full"></div>
                   </div>
                 </div>
               </div>
@@ -249,6 +283,49 @@ export default function SuperAdminDashboard() {
         {/* Right Column */}
         <div className="space-y-6">
           
+          {/* Quick Actions (Super Admin specific) */}
+          <Card className="border-border bg-card">
+            <CardHeader className="pb-3 border-b border-border/50">
+              <CardTitle className="text-sm font-semibold">Super Admin Actions</CardTitle>
+            </CardHeader>
+            <CardContent className="p-4">
+              <div className="grid grid-cols-2 gap-3">
+                <Button variant="outline" className="h-auto py-3 flex flex-col gap-2 items-center justify-center text-xs bg-background/50 hover:bg-primary/10 hover:text-primary hover:border-primary/50 transition-colors">
+                  <Plus className="w-5 h-5 text-muted-foreground" />
+                  Create Organization
+                </Button>
+                <Button variant="outline" className="h-auto py-3 flex flex-col gap-2 items-center justify-center text-xs bg-background/50 hover:bg-success/10 hover:text-success hover:border-success/50 transition-colors">
+                  <CheckCircle className="w-5 h-5 text-muted-foreground" />
+                  Approve Org
+                </Button>
+                <Button variant="outline" className="h-auto py-3 flex flex-col gap-2 items-center justify-center text-xs bg-background/50 hover:bg-danger/10 hover:text-danger hover:border-danger/50 transition-colors">
+                  <PauseCircle className="w-5 h-5 text-muted-foreground" />
+                  Suspend Org
+                </Button>
+                <Button variant="outline" className="h-auto py-3 flex flex-col gap-2 items-center justify-center text-xs bg-background/50 hover:bg-info/10 hover:text-info hover:border-info/50 transition-colors">
+                  <CreditCard className="w-5 h-5 text-muted-foreground" />
+                  Assign Subscription
+                </Button>
+                <Button variant="outline" className="h-auto py-3 flex flex-col gap-2 items-center justify-center text-xs bg-background/50 hover:bg-accent/10 hover:text-accent hover:border-accent/50 transition-colors">
+                  <Ticket className="w-5 h-5 text-muted-foreground" />
+                  Create License
+                </Button>
+                <Button variant="outline" className="h-auto py-3 flex flex-col gap-2 items-center justify-center text-xs bg-background/50 hover:bg-warning/10 hover:text-warning hover:border-warning/50 transition-colors">
+                  <Radio className="w-5 h-5 text-muted-foreground" />
+                  Broadcast Alert
+                </Button>
+                <Button variant="outline" className="h-auto py-3 flex flex-col gap-2 items-center justify-center text-xs bg-background/50 hover:bg-primary/10 hover:text-primary hover:border-primary/50 transition-colors">
+                  <Bot className="w-5 h-5 text-muted-foreground" />
+                  Configure AI
+                </Button>
+                <Button variant="outline" className="h-auto py-3 flex flex-col gap-2 items-center justify-center text-xs bg-background/50 hover:bg-orange-500/10 hover:text-orange-500 hover:border-orange-500/50 transition-colors">
+                  <ListRestart className="w-5 h-5 text-muted-foreground" />
+                  Restart OCR
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* System Alerts */}
           <Card className="border-danger/30 bg-danger/5">
             <CardHeader className="pb-3 border-b border-danger/10">
@@ -276,48 +353,6 @@ export default function SuperAdminDashboard() {
                   <h4 className="text-sm font-medium text-foreground">OCR Pipeline Stalled</h4>
                   <p className="text-xs text-muted-foreground mt-1">Worker node-04 failed to respond. Attempting restart.</p>
                   <span className="text-[10px] text-muted-foreground block mt-2">1 hr ago</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Recent Organizations */}
-          <Card className="border-border">
-            <CardHeader className="pb-3 border-b border-border/50 flex flex-row items-center justify-between">
-              <CardTitle className="text-sm font-semibold">New Organizations</CardTitle>
-              <ArrowUpRight className="w-4 h-4 text-muted-foreground cursor-pointer hover:text-primary transition-colors" />
-            </CardHeader>
-            <CardContent className="p-0">
-              <div className="divide-y divide-border/50">
-                <div className="p-3 flex items-center justify-between hover:bg-muted/30">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded bg-primary/20 flex items-center justify-center text-xs font-bold text-primary">BP</div>
-                    <div>
-                      <div className="text-sm font-medium">BP Renewables</div>
-                      <div className="text-[10px] text-muted-foreground">Added today</div>
-                    </div>
-                  </div>
-                  <Badge variant="outline" className="text-[10px] h-5">Enterprise</Badge>
-                </div>
-                <div className="p-3 flex items-center justify-between hover:bg-muted/30">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded bg-accent/20 flex items-center justify-center text-xs font-bold text-accent">SL</div>
-                    <div>
-                      <div className="text-sm font-medium">Schlumberger</div>
-                      <div className="text-[10px] text-muted-foreground">Added yesterday</div>
-                    </div>
-                  </div>
-                  <Badge variant="outline" className="text-[10px] h-5">Pro</Badge>
-                </div>
-                <div className="p-3 flex items-center justify-between hover:bg-muted/30">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded bg-emerald-500/20 flex items-center justify-center text-xs font-bold text-emerald-500">EX</div>
-                    <div>
-                      <div className="text-sm font-medium">ExxonMobil</div>
-                      <div className="text-[10px] text-muted-foreground">Added 2 days ago</div>
-                    </div>
-                  </div>
-                  <Badge variant="outline" className="text-[10px] h-5">Enterprise</Badge>
                 </div>
               </div>
             </CardContent>

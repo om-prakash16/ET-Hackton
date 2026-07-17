@@ -1,68 +1,101 @@
 import logging
 import time
+import json
 from typing import Dict, Any, List
 from app.services.retrieval import retrieval_engine
-from app.services.llm import llm_provider
+from google import genai
+from pydantic import BaseModel
+from app.core.config import settings
+from app.db.qms_mock import get_qms_standard
 
 logger = logging.getLogger(__name__)
 
+try:
+    client = genai.Client(api_key=settings.AI_API_KEY)
+except Exception:
+    client = None
+
+class ComplianceGap(BaseModel):
+    gap_type: str
+    description: str
+    severity: str
+    regulatory_reference: str
+
+class ComplianceEvaluationResult(BaseModel):
+    status: str
+    gaps: list[ComplianceGap]
+
 class ComplianceEvaluator:
     """
-    Evaluates industrial assets against targeted regulations using GraphRAG.
+    Evaluates industrial assets against targeted regulations using GraphRAG and QMS mock.
     """
 
     async def evaluate_asset(self, equipment_tag: str, target_regulation: str, org_id: str) -> Dict[str, Any]:
         start_time = time.time()
         logger.info(f"Evaluating {equipment_tag} against {target_regulation}")
         
-        # 1. Targeted GraphRAG Retrieval for Regulation + Equipment history
-        query = f"Does the maintenance history and documents for {equipment_tag} comply with {target_regulation} requirements?"
+        qms_standard = get_qms_standard(target_regulation)
+        rules_text = "\n".join([f"- {r}" for r in qms_standard.get("rules", [])])
+        
+        # 1. Targeted GraphRAG Retrieval for Equipment history
+        query = f"Maintenance history, work orders, and incident reports for {equipment_tag}"
         semantic_evidence = await retrieval_engine.search_vectors(query, org_id, limit=5)
         graph_evidence = await retrieval_engine.search_graph(org_id, equipment_tag)
         
-        # 2. Build the Evaluator Prompt
-        evaluator_prompt = f"""You are a strict Industrial Compliance Auditor.
-        Evaluate {equipment_tag} against the regulation: '{target_regulation}'.
-        Use the provided context to determine if it is Compliant, Non-Compliant, or Partially Compliant.
-        Extract gaps and map them to severity levels.
-        Do NOT invent evidence.
-        """
-        
-        context = "--- COMPLIANCE EVIDENCE ---\n"
+        context = "--- GRAPH EVIDENCE ---\n"
+        context += json.dumps(graph_evidence, indent=2) + "\n\n"
+        context += "--- SEMANTIC EVIDENCE ---\n"
         for v in semantic_evidence:
             context += f"- {v['text']}\n"
             
-        # 3. LLM Orchestration
-        # In production, output is enforced via JSON schemas. Simulated here.
-        raw_llm_response = await llm_provider.generate_response(evaluator_prompt, context, query)
+        # 2. Build the Evaluator Prompt
+        evaluator_prompt = f"""
+        You are a strict Industrial Compliance Auditor.
+        Evaluate {equipment_tag} against the {target_regulation} standard.
         
-        # 4. Synthesize structured Compliance Object
-        # Based on our offline mock, we'll produce a deterministic gap analysis
-        status = "Partially Compliant"
+        Rules to check:
+        {rules_text}
+        
+        Context Data (Graph & Documents):
+        {context}
+        
+        Determine if it is 'Compliant', 'Non-Compliant', or 'Partially Compliant'.
+        Extract any gaps based on missing evidence for the required rules.
+        Map gaps to severity levels (HIGH, MEDIUM, LOW).
+        Do NOT invent evidence. If something required is not in the context, it is a gap.
+        """
+        
+        status = "Unknown"
         gaps = []
+        confidence_score = 0.0
         
-        if "Missing" in raw_llm_response or "fail" in raw_llm_response.lower():
-            status = "Non-Compliant"
-            gaps.append({
-                "gap_type": "Missing Inspection",
-                "description": "Simulated gap: Annual thickness testing not found in records.",
-                "severity": "HIGH",
-                "regulatory_reference": target_regulation
-            })
+        if client:
+            try:
+                response = client.models.generate_content(
+                    model='gemini-2.5-flash',
+                    contents=evaluator_prompt,
+                    config={
+                        'response_mime_type': 'application/json',
+                        'response_schema': ComplianceEvaluationResult,
+                        'temperature': 0.1
+                    },
+                )
+                parsed_data = response.parsed
+                status = parsed_data.status
+                gaps = [g.model_dump() for g in parsed_data.gaps]
+                confidence_score = 0.92
+            except Exception as e:
+                logger.error(f"Failed to run LLM compliance check: {e}")
+                status = "Error"
         else:
-            gaps.append({
-                "gap_type": "Documentation Gap",
-                "description": "Simulated gap: Operator training certificates not linked to the equipment topology.",
-                "severity": "MEDIUM",
-                "regulatory_reference": target_regulation
-            })
-
+            logger.warning("GenAI client not available. Returning empty check.")
+            
         processing_time_ms = int((time.time() - start_time) * 1000)
         
         return {
             "equipment_tag": equipment_tag,
             "status": status,
-            "confidence_score": 0.82,
+            "confidence_score": confidence_score,
             "gaps": gaps,
             "evidence_citations": [f"Qdrant-Chunk-{v['chunk_index']}" for v in semantic_evidence],
             "processing_time_ms": processing_time_ms

@@ -48,3 +48,11 @@ async def get_current_active_user(
     if not current_user.is_active:
         raise ForbiddenException("Inactive user")
     return current_user
+
+async def get_current_tenant(
+    current_user: User = Depends(get_current_active_user),
+) -> str:
+    """Extracts the organization ID (tenant ID) from the current user."""
+    if not current_user.org_id:
+        raise ForbiddenException("User does not belong to any organization.")
+    return str(current_user.org_id)

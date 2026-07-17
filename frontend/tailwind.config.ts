@@ -68,7 +68,11 @@ const config = {
           DEFAULT: "hsl(var(--sidebar))",
           foreground: "hsl(var(--sidebar-foreground))",
           border: "hsl(var(--sidebar-border))",
-        }
+        },
+        deep: "hsl(var(--deep))",
+        elevated: "hsl(var(--elevated))",
+        subtle: "hsl(var(--subtle))",
+        active: "hsl(var(--active))",
       },
       borderRadius: {
         lg: "var(--radius)",

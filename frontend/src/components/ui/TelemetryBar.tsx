@@ -29,7 +29,7 @@ export default function TelemetryBar({ reading, max = 100 }: TelemetryBarProps) 
       )}
       
       <div className="flex justify-between items-center text-xs">
-        <span className="text-secondary font-medium">{reading.label}</span>
+        <span className="text-muted-foreground font-medium">{reading.label}</span>
         <div className="flex items-center gap-2 font-mono">
           <span className="text-primary font-semibold">{reading.value} {reading.unit}</span>
           {reading.delta !== 0 && (
@@ -54,3 +54,4 @@ export default function TelemetryBar({ reading, max = 100 }: TelemetryBarProps) 
     </div>
   );
 }
+

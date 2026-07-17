@@ -8,6 +8,17 @@ Today, we are presenting our Industrial AI Operating System. This is not a chatb
 
 ---
 
+## Step 0: Enterprise Multi-Tenancy & RBAC (Super Admin)
+**Action:** Open the application to the Super Admin User Management Dashboard (`http://localhost:3000/admin/users`).
+**Presenter:**
+"Our platform isn't just a prototype for one factory. We built a true multi-tenant B2B AI Operating System. As a Super Admin, we can instantly provision an isolated 'Enterprise Brain' for a new client. 
+
+* **Action:** Click 'Invite Team Member' to open the provisioning modal.
+* **Presenter:** 
+"When we onboard a client like Tata Steel or Reliance, their users are assigned strict roles—like 'Maintenance Engineer' or 'Quality Manager'. The backend API enforces Role-Based Access Control using JWTs. This automatically restricts what parts of the Copilot they can access and what evidence they are legally allowed to upload, ensuring complete data security between departments and companies."
+
+---
+
 ## Step 1: The Unified Brain (Executive Dashboard)
 **Action:** Open the application to the default 'Unified Brain' tab (`http://localhost:3000`).
 **Presenter:**
@@ -64,6 +75,21 @@ Today, we are presenting our Industrial AI Operating System. This is not a chatb
 * **Presenter:**
 "The system detects that Tank T-400 missed its mandatory secondary containment inspection. It knows this because no work order node exists in the Graph since August. It also flags the P-101A fluid mismatch as a direct safety violation. 
 With one click, we can generate a work order to fix the compliance gap."
+
+---
+
+## Step 6: Lessons Learned & Failure Intelligence Engine
+**Action:** Click on the 'Lessons Learned' tab on the left navigation.
+**Presenter:**
+"Finally, we don't just react to failures; we prevent them. The challenge asked for a system that proactively analyzes historical near-misses and external data to push warnings before similar conditions recur."
+* **Action:** Point out the historical database showing past incidents.
+* **Presenter:**
+"Here we see our Historical Knowledge Base. But the real magic is proactive discovery."
+* **Action:** Click the 'Run AI Discovery' button.
+* **Presenter:**
+"The AI is now crunching 5 years of maintenance data and cross-referencing it with external API-610 standards.
+*Point to the newly generated insight*. It just discovered a systemic pattern: P-100 series centrifugal pumps experience premature bearing failure every 17-19 months, consistently aligning with peak summer ambient temperatures. It proactively generated preventive actions to switch to a high-temperature synthetic lubricant before May 1st. 
+We just prevented 36 hours of unplanned downtime."
 
 ---
 

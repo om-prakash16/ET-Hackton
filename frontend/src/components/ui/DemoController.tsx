@@ -78,7 +78,7 @@ export default function DemoController({
                 onReset();
                 setIsAutoplay(false);
               }}
-              className="flex items-center gap-2 w-full text-left px-2 py-1.5 rounded bg-void border border-subtle hover:border-active transition-all text-xs text-secondary"
+              className="flex items-center gap-2 w-full text-left px-2 py-1.5 rounded bg-void border border-subtle hover:border-active transition-all text-xs text-muted-foreground"
             >
               <RotateCcw className="w-3.5 h-3.5 text-muted" />
               <span>Reset Demo State</span>
@@ -89,3 +89,4 @@ export default function DemoController({
     </div>
   );
 }
+

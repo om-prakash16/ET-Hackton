@@ -38,9 +38,10 @@ export function AIBriefingWidget({ liveAlerts = [] }: { liveAlerts?: any[] }) {
             </div>
           </div>
         )) : (
-          <div className="text-xs text-secondary text-center py-4">No critical alerts detected in the telemetry stream.</div>
+          <div className="text-xs text-muted-foreground text-center py-4">No critical alerts detected in the telemetry stream.</div>
         )}
       </div>
     </div>
   );
 }
+

@@ -2,7 +2,7 @@ import {
   LayoutDashboard, Building2, Users, Database, ShieldAlert, 
   Settings, Activity, Cpu, FileText, CheckSquare, BarChart3, 
   PenTool, Wrench, Thermometer, Camera, Eye, HardDrive, 
-  AlertTriangle, ClipboardCheck, Network, Search
+  AlertTriangle, ClipboardCheck, Network, Search, Lightbulb
 } from "lucide-react";
 
 export type RoleId = 
@@ -58,6 +58,7 @@ export const ROLES: Record<RoleId, RoleConfig> = {
       { label: "Compliance", icon: ShieldAlert, href: "/workspace/admin/compliance" },
       { label: "Maintenance", icon: Wrench, href: "/workspace/admin/maintenance" },
       { label: "AI Insights", icon: Cpu, href: "/workspace/admin/ai" },
+      { label: "Lessons Learned", icon: Lightbulb, href: "/workspace/admin/lessons", badge: "New", badgeType: "success" },
     ],
     widgets: [
       { type: "kpi", title: "Total Users", data: { value: "1,248" }, span: 1 },
@@ -80,6 +81,7 @@ export const ROLES: Record<RoleId, RoleConfig> = {
       { label: "Maintenance", icon: Wrench, href: "/workspace/plant/maintenance" },
       { label: "Incidents", icon: AlertTriangle, href: "/workspace/plant/incidents", badge: "2", badgeType: "warning" },
       { label: "Quality", icon: CheckSquare, href: "/workspace/plant/quality" },
+      { label: "Lessons Learned", icon: Lightbulb, href: "/workspace/plant/lessons", badge: "New", badgeType: "success" },
     ],
     widgets: [
       { type: "kpi", title: "OEE", data: { value: "85%" }, span: 1 },

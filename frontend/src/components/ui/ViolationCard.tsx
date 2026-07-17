@@ -45,7 +45,7 @@ export default function ViolationCard({ violation, onClick }: ViolationCardProps
           <span className="text-[10px] text-muted">{violation.section}</span>
         </div>
 
-        <p className="text-xs text-secondary leading-relaxed mt-0.5">
+        <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
           {violation.description}
         </p>
       </div>
@@ -54,3 +54,4 @@ export default function ViolationCard({ violation, onClick }: ViolationCardProps
     </div>
   );
 }
+

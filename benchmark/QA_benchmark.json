@@ -1,0 +1,26 @@
+[
+  {
+    "id": "q1",
+    "domain": "maintenance",
+    "question": "What is the expected behavior when P-101A experiences a 15% pressure drop?",
+    "expected_answer": "According to the API-610 manual, a 10-15% pressure drop in the P-101A mechanical seal pump typically indicates seal degradation or failure.",
+    "source_documents": ["API-610_Centrifugal_Pumps_Manual"],
+    "required_entities": ["P-101A", "mechanical seal", "pressure drop"]
+  },
+  {
+    "id": "q2",
+    "domain": "compliance",
+    "question": "How often should Tank T-400 undergo secondary containment inspection under the Factory Act?",
+    "expected_answer": "Under the Factory Act and OISD-105 frameworks, Tank T-400 requires secondary containment inspection every 6 months.",
+    "source_documents": ["Factory_Act_Compliance_Guidelines", "OISD-105"],
+    "required_entities": ["Tank T-400", "secondary containment inspection", "6 months"]
+  },
+  {
+    "id": "q3",
+    "domain": "rca",
+    "question": "What happens if Type-B flushing fluid is used in P-100 series pumps during peak summer?",
+    "expected_answer": "Historical maintenance logs show that using Type-B flushing fluid in P-100 series pumps during peak summer ambient temperatures leads to premature bearing failure within 17-19 months.",
+    "source_documents": ["Historical_Maintenance_Logs_2019_2024"],
+    "required_entities": ["Type-B flushing fluid", "premature bearing failure", "17-19 months"]
+  }
+]

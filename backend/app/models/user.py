@@ -11,7 +11,8 @@ user_roles = Table(
     Column("user_id", UUID(as_uuid=True), ForeignKey("users.id"), primary_key=True),
     Column("role_id", UUID(as_uuid=True), ForeignKey("roles.id"), primary_key=True),
     Column("plant_id", UUID(as_uuid=True), ForeignKey("plants.id"), nullable=True),
-    Column("department_id", UUID(as_uuid=True), ForeignKey("departments.id"), nullable=True)
+    Column("department_id", UUID(as_uuid=True), ForeignKey("departments.id"), nullable=True),
+    Column("expires_at", DateTime(timezone=True), nullable=True)
 )
 
 class User(Base):

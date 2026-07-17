@@ -196,7 +196,7 @@ export function OverviewPanel({ onNavigateToCorpus, onNavigateToCopilot }: Overv
                   <span className="text-[10px] shrink-0 text-muted">{alert.time}</span>
                 </div>
                 <h4 className="text-sm font-semibold text-primary">{alert.title}</h4>
-                <p className="text-xs leading-relaxed text-secondary">{alert.desc}</p>
+                <p className="text-xs leading-relaxed text-muted-foreground">{alert.desc}</p>
                 <div className="flex items-center gap-1 text-xs font-semibold" style={{ color: alert.color }}>
                   Investigate in Copilot <ArrowRight className="w-3 h-3 ml-1" />
                 </div>
@@ -242,3 +242,4 @@ export function OverviewPanel({ onNavigateToCorpus, onNavigateToCopilot }: Overv
     </div>
   );
 }
+

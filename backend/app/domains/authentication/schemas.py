@@ -60,3 +60,8 @@ class PlantCreateRequest(BaseModel):
     city: str
     address: str
     timezone: str = "UTC"
+
+class DelegateAdminRequest(BaseModel):
+    user_id: UUID
+    duration_hours: int
+

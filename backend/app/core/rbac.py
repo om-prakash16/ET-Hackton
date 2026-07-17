@@ -3,6 +3,7 @@ from fastapi import Depends
 from app.models.user import User
 from app.core.deps import get_current_active_user
 from app.core.exceptions import ForbiddenException
+from app.db.session import get_db
 import logging
 
 logger = logging.getLogger(__name__)
@@ -16,14 +17,33 @@ class RequirePermissions:
     def __init__(self, required_permissions: List[str]):
         self.required_permissions = required_permissions
 
-    def __call__(self, current_user: User = Depends(get_current_active_user)) -> User:
+    async def __call__(
+        self, 
+        current_user: User = Depends(get_current_active_user),
+        db = Depends(get_db)
+    ) -> User:
+        from app.models.user import user_roles
+        from datetime import datetime
+        from sqlalchemy.future import select
+
         user_permissions = set()
         
         # Bypass for hackathon mock user
         if str(current_user.id) == '12345678-1234-5678-1234-567812345678':
             return current_user
             
+        now = datetime.utcnow()
+        query = select(user_roles.c.role_id).where(
+            (user_roles.c.user_id == current_user.id) &
+            ((user_roles.c.expires_at == None) | (user_roles.c.expires_at > now))
+        )
+        result = await db.execute(query)
+        active_role_ids = set(result.scalars().all())
+            
         for role in current_user.roles:
+            if role.id not in active_role_ids:
+                continue
+                
             # If the user has a Super Admin role, bypass permission checks
             if role.name == "Super Admin":
                 return current_user
@@ -39,3 +59,4 @@ class RequirePermissions:
             raise ForbiddenException(detail=f"Not enough permissions. Missing: {', '.join(missing_permissions)}")
             
         return current_user
+

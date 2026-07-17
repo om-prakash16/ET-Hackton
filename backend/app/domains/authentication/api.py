@@ -335,3 +335,55 @@ async def complete_registration(
         "access_token": create_access_token(current_user.id, expires_delta=access_token_expires, custom_claims=custom_claims),
         "token_type": "bearer",
     }
+
+from sqlalchemy.dialects.postgresql import insert
+
+@router.post("/delegate-admin")
+async def delegate_admin(
+    req: schemas.DelegateAdminRequest,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+) -> Any:
+    # 1. Find target user
+    query = select(User).where(User.id == req.user_id)
+    result = await db.execute(query)
+    target_user = result.scalars().first()
+    if not target_user:
+        raise HTTPException(status_code=404, detail="Target user not found")
+        
+    # 2. Find Super Admin role
+    from app.models.rbac import Role
+    role_query = select(Role).where(Role.name == "Super Admin")
+    role_result = await db.execute(role_query)
+    sa_role = role_result.scalars().first()
+    if not sa_role:
+        raise HTTPException(status_code=404, detail="Super Admin role not found")
+        
+    # 3. Assign role with expiration
+    from app.models.user import user_roles
+    
+    expires = datetime.utcnow() + timedelta(hours=req.duration_hours)
+    
+    stmt = insert(user_roles).values(
+        user_id=target_user.id,
+        role_id=sa_role.id,
+        expires_at=expires
+    )
+    stmt = stmt.on_conflict_do_update(
+        index_elements=['user_id', 'role_id'],
+        set_=dict(expires_at=expires)
+    )
+    await db.execute(stmt)
+    
+    # 4. Audit Log
+    audit_log = AuditLog(
+        user_id=current_user.id,
+        action="TEMPORARY_ADMIN_DELEGATED",
+        module="Authentication",
+        new_value={"target_user": str(target_user.id), "duration": req.duration_hours, "expires_at": expires.isoformat()}
+    )
+    db.add(audit_log)
+    await db.commit()
+    
+    return {"status": "success", "message": f"Temporary admin granted for {req.duration_hours} hours."}
+

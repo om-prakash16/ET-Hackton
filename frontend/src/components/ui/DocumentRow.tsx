@@ -34,7 +34,7 @@ export default function DocumentRow({ doc, onSelect }: DocumentRowProps) {
           {statusBadges[doc.status]}
         </div>
         <div className="text-right hidden sm:block">
-          <div className="text-xs font-mono font-medium text-secondary">{doc.nodes} nodes</div>
+          <div className="text-xs font-mono font-medium text-muted-foreground">{doc.nodes} nodes</div>
           <div className="text-[10px] text-muted">knowledge links</div>
         </div>
         <button className="text-muted hover:text-primary transition-colors">
@@ -44,3 +44,4 @@ export default function DocumentRow({ doc, onSelect }: DocumentRowProps) {
     </div>
   );
 }
+

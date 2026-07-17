@@ -12,6 +12,9 @@ import {
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useRouter } from "next/navigation";
+import DemoController from "@/components/ui/DemoController";
+import { GlobalSearch } from "@/components/ui/GlobalSearch";
 
 export default function WorkspaceLayout({
   children,
@@ -21,11 +24,43 @@ export default function WorkspaceLayout({
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setIsSearchOpen(prev => !prev);
+      }
+      if (e.key === 'Escape') {
+        setIsSearchOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   const { role } = useParams();
   const roleId = role as RoleId;
   const roleConfig = ROLES[roleId];
   const pathname = usePathname();
+  const router = useRouter();
   const { theme, setTheme } = useTheme();
+
+  const currentPanel = pathname?.split('/').pop() || 'dashboard';
+
+  const handlePanelChange = (panel: string) => {
+    const target = panel === 'overview' ? 'dashboard' : panel;
+    router.push(`/workspace/${roleId}/${target}`);
+  };
+
+  const handleTriggerAlert = () => {
+    alert("🚨 CRITICAL ALERT: P-101A Pressure Drop Detected! Navigating to Maintenance...");
+  };
+
+  const handleReset = () => {
+    router.push(`/workspace/${roleId}/dashboard`);
+  };
 
   // If invalid role, show 403 / 404
   if (!roleConfig) {
@@ -192,7 +227,12 @@ export default function WorkspaceLayout({
           </div>
 
           <div className="flex items-center gap-3 lg:gap-5">
-            <Button variant="outline" size="sm" className="hidden md:flex items-center gap-2 bg-background/50 h-9 px-3">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="hidden md:flex items-center gap-2 bg-background/50 h-9 px-3"
+              onClick={() => setIsSearchOpen(true)}
+            >
               <Command className="w-4 h-4 text-muted-foreground" />
               <span className="text-xs text-muted-foreground">AI Copilot Search</span>
               <kbd className="ml-2 text-[10px] font-mono bg-muted px-1.5 rounded text-muted-foreground">⌘K</kbd>
@@ -282,6 +322,16 @@ export default function WorkspaceLayout({
           </div>
         </main>
       </div>
+      
+      {/* Hackathon Demo Controller Injection */}
+      <DemoController 
+        activePanel={currentPanel === 'dashboard' ? 'overview' : currentPanel}
+        onChangePanel={handlePanelChange}
+        onTriggerAlert={handleTriggerAlert}
+        onReset={handleReset}
+      />
+      
+      <GlobalSearch isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
     </div>
   );
 }

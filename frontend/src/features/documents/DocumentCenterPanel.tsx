@@ -234,7 +234,7 @@ export function DocumentCenterPanel() {
                   <h4 className="text-[10px] font-bold tracking-widest text-muted uppercase mb-3">Knowledge Graph Extraction</h4>
                   <div className="p-4 rounded-xl flex flex-col gap-3 border border-subtle bg-deep/30">
                     <div className="flex justify-between items-center text-xs">
-                      <span className="text-secondary">Entities Extracted</span>
+                      <span className="text-muted-foreground">Entities Extracted</span>
                       <span className="font-bold font-mono text-primary">{selectedDoc.nodes}</span>
                     </div>
                     <div className="progress-rail">
@@ -333,3 +333,4 @@ export function DocumentCenterPanel() {
     </div>
   );
 }
+

@@ -40,23 +40,42 @@ class HybridRetrievalEngine:
 
     async def search_graph(self, org_id: str, query: str) -> Dict[str, Any]:
         """
-        Keyword-based topology extraction from Neo4j.
+        Advanced Graph Traversal from Neo4j, pulling multi-hop neighborhood around the query entity.
         """
         evidence = {"nodes": [], "edges": []}
         try:
             with neo4j_client.get_session() as session:
-                # Basic graph expansion if Equipment is mentioned
+                # 2-hop graph expansion around any node matching the query tag
                 result = session.run(
-                    "MATCH (e:Equipment {org_id: $org_id})-[r]->(d:Document) "
-                    "RETURN e.tag AS tag, e.type AS type, type(r) AS rel, d.id AS doc "
-                    "LIMIT 10",
-                    org_id=org_id
+                    """
+                    MATCH (n {org_id: $org_id})
+                    WHERE n.tag = $query OR n.label = $query
+                    MATCH p = (n)-[*1..2]-(m)
+                    RETURN [node IN nodes(p) | {labels: labels(node), props: properties(node)}] AS path_nodes,
+                           [rel IN relationships(p) | {type: type(rel), start: startNode(rel).tag, end: endNode(rel).tag}] AS path_rels
+                    LIMIT 25
+                    """,
+                    org_id=org_id, query=query
                 )
                 
+                added_nodes = set()
+                added_edges = set()
+                
                 for record in result:
-                    evidence["nodes"].append(record["tag"])
-                    evidence["edges"].append(f"({record['tag']})-[{record['rel']}]->({record['doc']})")
-                    
+                    # Add nodes
+                    for node in record["path_nodes"]:
+                        node_str = f"{node['labels'][0] if node['labels'] else 'Node'}({node['props'].get('tag', node['props'].get('id', 'Unknown'))})"
+                        if node_str not in added_nodes:
+                            evidence["nodes"].append(node_str)
+                            added_nodes.add(node_str)
+                            
+                    # Add edges
+                    for rel in record["path_rels"]:
+                        edge_str = f"({rel.get('start', '?')})-[{rel['type']}]->({rel.get('end', '?')})"
+                        if edge_str not in added_edges:
+                            evidence["edges"].append(edge_str)
+                            added_edges.add(edge_str)
+                            
         except Exception as e:
             logger.error(f"Graph traversal failed: {e}")
             

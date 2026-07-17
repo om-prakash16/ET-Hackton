@@ -7,6 +7,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { AuthNav } from "@/components/AuthNav";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -54,16 +55,7 @@ export default function LandingPage() {
           </div>
         </div>
 
-        <div className="hidden lg:flex items-center gap-6">
-          <button className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
-            <Globe className="w-4 h-4 opacity-70" /> EN <ChevronDown className="w-3 h-3 opacity-50" />
-          </button>
-          <div className="w-px h-5 bg-border"></div>
-          <Link href="/login" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Sign in</Link>
-          <Button asChild variant="default">
-            <Link href="/register">Get started</Link>
-          </Button>
-        </div>
+        <AuthNav />
       </nav>
 
       {/* Hero Section */}

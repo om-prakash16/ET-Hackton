@@ -7,16 +7,18 @@ import { SmtpConfigModal } from "@/components/ui/SmtpConfigModal";
 interface AdminPageTemplateProps<T = any> {
   title: string;
   description: string;
-  entityName: string;
-  columns: string[];
+  entityName?: string;
+  columns?: string[];
   data?: T[];
   renderRow?: (item: T, index: number) => React.ReactNode;
   onAddClick?: () => void;
   children?: React.ReactNode; // For modals or other overlays
+  headerIcon?: any;
+  headerAction?: React.ReactNode;
 }
 
 export function AdminPageTemplate<T = any>({ 
-  title, description, entityName, columns, data = [], renderRow, onAddClick, children 
+  title, description, entityName = "Item", columns = [], data = [], renderRow, onAddClick, children 
 }: AdminPageTemplateProps<T>) {
   const [searchQuery, setSearchQuery] = useState("");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -101,7 +103,7 @@ export function AdminPageTemplate<T = any>({
   };
 
   return (
-    <div className="p-6 space-y-6 max-w-[1600px] mx-auto relative">
+    <div className="p-6 space-y-6 w-full relative">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -307,3 +309,4 @@ export function AdminPageTemplate<T = any>({
     </div>
   );
 }
+export default AdminPageTemplate;

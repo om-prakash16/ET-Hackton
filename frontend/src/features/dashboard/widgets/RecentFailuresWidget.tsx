@@ -26,7 +26,7 @@ export function RecentFailuresWidget() {
           <div key={incident.id} className="flex items-center justify-between p-3 rounded-lg bg-deep/30 border border-subtle hover:bg-elevated/40 transition-colors">
             <div>
               <div className="text-sm font-semibold text-primary">{incident.equipment}</div>
-              <div className="text-xs text-secondary mt-0.5">{incident.type}</div>
+              <div className="text-xs text-muted-foreground mt-0.5">{incident.type}</div>
             </div>
             <div className="flex flex-col items-end gap-1">
               <span className={`text-[10px] px-2 py-0.5 rounded font-medium ${
@@ -47,3 +47,4 @@ export function RecentFailuresWidget() {
     </div>
   );
 }
+

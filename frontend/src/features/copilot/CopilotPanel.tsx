@@ -75,6 +75,8 @@ export function CopilotPanel() {
       // Check if prompt references assets to populate details panel
       if (promptText.toLowerCase().includes('p-101a') || promptText.toLowerCase().includes('pressure')) {
         setSelectedCitation('P-101A');
+      } else if (promptText.toLowerCase().includes('c-502') || promptText.toLowerCase().includes('vibration')) {
+        setSelectedCitation('C-502');
       } else if (promptText.toLowerCase().includes('oisd') || promptText.toLowerCase().includes('compliance')) {
         setSelectedCitation('OISD-105');
       }
@@ -105,7 +107,7 @@ export function CopilotPanel() {
       <motion.div
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
-        className="w-64 flex flex-col gap-4 shrink-0"
+        className="hidden lg:flex w-64 flex-col gap-4 shrink-0"
       >
         <button 
           onClick={() => setMessages([{ id: 'msg-init', role: 'assistant', content: 'AI Investigation OS active. Connected to Neo4j graph and Qdrant telemetry. I have context over 14,302 documents and 842K knowledge nodes. How can I assist with Visakhapatnam operations?', timestamp: new Date() }])}
@@ -127,7 +129,7 @@ export function CopilotPanel() {
             <button 
               key={item.id}
               onClick={() => handleSend(`Load details for investigation ${item.title}`)}
-              className={`flex items-center gap-2 w-full text-left px-2 py-1.5 rounded-lg text-xs transition-colors hover:bg-elevated/50 ${item.active ? 'bg-elevated text-primary border border-subtle' : 'text-secondary'}`}
+              className={`flex items-center gap-2 w-full text-left px-2 py-1.5 rounded-lg text-xs transition-colors hover:bg-elevated/50 ${item.active ? 'bg-elevated text-primary border border-subtle' : 'text-muted-foreground'}`}
             >
               <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${item.severity === 'critical' ? 'bg-red-500' : item.severity === 'warning' ? 'bg-amber-500' : 'bg-cyan-500'}`} />
               <span className="truncate">{item.title}</span>
@@ -144,7 +146,7 @@ export function CopilotPanel() {
             'Live_Telemetry',
             'OISD_Regulations'
           ].map((src) => (
-            <div key={src} className="flex items-center gap-2 px-2 py-1 text-xs text-secondary font-mono">
+            <div key={src} className="flex items-center gap-2 px-2 py-1 text-xs text-muted-foreground font-mono">
               <span className="pulse-dot pulse-emerald w-1.5 h-1.5 shrink-0" />
               <span className="truncate">{src}</span>
             </div>
@@ -200,7 +202,7 @@ export function CopilotPanel() {
                 <button
                   key={s.text}
                   onClick={() => handleSend(s.text)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-subtle bg-deep/50 hover:bg-elevated hover:border-active transition-all text-xs text-secondary hover:text-primary"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-subtle bg-deep/50 hover:bg-elevated hover:border-active transition-all text-xs text-muted-foreground hover:text-primary"
                 >
                   <Icon className="w-3.5 h-3.5 text-accent-cyan" />
                   {s.text}
@@ -250,7 +252,7 @@ export function CopilotPanel() {
       <motion.div
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
-        className="w-64 glass-card p-4 shrink-0 flex flex-col overflow-y-auto"
+        className="hidden xl:flex w-64 glass-card p-4 shrink-0 flex-col overflow-y-auto"
       >
         <div className="flex items-center gap-2 mb-4">
           <Network className="w-4 h-4 text-accent-cyan" style={{ color: 'var(--accent-cyan)' }} />
@@ -261,35 +263,62 @@ export function CopilotPanel() {
           <div className="flex flex-col gap-4 text-xs">
             <div>
               <div className="text-sm font-semibold text-primary">{selectedCitation}</div>
-              <div className="text-[10px] text-accent-cyan font-mono mt-0.5">Asset ID: P-101A</div>
+              <div className="text-[10px] text-accent-cyan font-mono mt-0.5">Asset ID: {selectedCitation}</div>
             </div>
 
             <div className="border-t border-subtle pt-3">
               <div className="text-[10px] uppercase font-bold text-muted mb-1.5">Direct Relationships</div>
-              <div className="flex flex-col gap-1 text-secondary">
-                <div className="flex justify-between">
-                  <span>has_component</span>
-                  <span className="text-primary font-semibold">Mechanical Seal</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>governed_by</span>
-                  <span className="text-primary font-semibold">API Standard 610</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>monitored_by</span>
-                  <span className="text-primary font-semibold">Vibration Sensor</span>
-                </div>
+              <div className="flex flex-col gap-1 text-muted-foreground">
+                {selectedCitation === 'C-502' ? (
+                  <>
+                    <div className="flex justify-between">
+                      <span>has_component</span>
+                      <span className="text-primary font-semibold">Compressor Driveshaft</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>maintained_by</span>
+                      <span className="text-primary font-semibold">Maintenance Team B</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>monitored_by</span>
+                      <span className="text-primary font-semibold">Vibration Sensor V-82</span>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="flex justify-between">
+                      <span>has_component</span>
+                      <span className="text-primary font-semibold">Mechanical Seal</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>governed_by</span>
+                      <span className="text-primary font-semibold">API Standard 610</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>monitored_by</span>
+                      <span className="text-primary font-semibold">Vibration Sensor</span>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
 
             <div className="border-t border-subtle pt-3">
               <div className="text-[10px] uppercase font-bold text-muted mb-2">Evidence Documents</div>
               <div className="flex flex-col gap-1.5">
-                {['API-610 Centrifugal Pumps Manual.pdf', 'Incident Report Seal Failure.txt'].map((doc) => (
-                  <div key={doc} className="p-2 rounded border border-subtle bg-deep/50 text-[10px] font-mono leading-tight text-secondary">
-                    {doc}
-                  </div>
-                ))}
+                {selectedCitation === 'C-502' ? (
+                  ['C-502 Setup Logs', 'Bolt Torque Spec.docx'].map((doc) => (
+                    <div key={doc} className="p-2 rounded border border-subtle bg-deep/50 text-[10px] font-mono leading-tight text-muted-foreground">
+                      {doc}
+                    </div>
+                  ))
+                ) : (
+                  ['API-610 Centrifugal Pumps Manual.pdf', 'Incident Report Seal Failure.txt'].map((doc) => (
+                    <div key={doc} className="p-2 rounded border border-subtle bg-deep/50 text-[10px] font-mono leading-tight text-muted-foreground">
+                      {doc}
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           </div>
@@ -305,3 +334,4 @@ export function CopilotPanel() {
     </div>
   );
 }
+

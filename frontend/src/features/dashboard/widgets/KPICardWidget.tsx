@@ -39,7 +39,7 @@ export function KPICardWidget() {
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <Icon className="w-4 h-4 text-accent-cyan" />
-            <span className="text-xs font-semibold text-secondary uppercase tracking-wider">{kpi.title}</span>
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{kpi.title}</span>
           </div>
           <span className={`px-2 py-0.5 rounded text-[10px] font-mono ${isGood ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'}`}>
             {kpi.status}
@@ -69,3 +69,4 @@ export function KPICardWidget() {
     </div>
   );
 }
+
