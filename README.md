@@ -41,29 +41,23 @@ An enterprise-grade **Decision Intelligence Engine** and **Unified Operational B
 
 ## 🏗️ System Architecture
 
-```mermaid
-C4Deployment
-    title Deployment Architecture: Enterprise AI Operating System
-    
-    Node(k8s, "Infrastructure Layer", "Docker / Kubernetes") {
-        Node(app_layer, "Application Services") {
-            Container(nextjs, "Frontend Command Center", "Next.js 15, Tailwind, Framer Motion")
-            Container(fastapi, "AI Decision Engine", "FastAPI, Async SQLAlchemy, Celery")
-            Container(mobile, "Field Operations App", "React Native / Flutter")
-        }
-        
-        Node(ingestion_layer, "Event & Stream Processing") {
-            ContainerQueue(kafka, "Apache Kafka", "Real-time Document & Event Streaming")
-            Container(zookeeper, "Zookeeper", "Cluster Coordination")
-        }
-        
-        Node(data_layer, "Multi-Model Persistence Layer") {
-            ContainerDb(neo4j, "Neo4j Cluster", "Topological Knowledge Graph")
-            ContainerDb(qdrant, "Qdrant Cluster", "Semantic Vector Embeddings")
-            ContainerDb(postgres, "PostgreSQL", "Enterprise RBAC & Document Metadata")
-            ContainerDb(redis, "Redis Memory", "High-speed Caching & Session State")
-        }
-    }
+```text
+[ Infrastructure Layer (Docker / Kubernetes) ]
+  │
+  ├── [ Application Services ]
+  │    ├── Frontend: Next.js 15, Tailwind, Framer Motion
+  │    ├── Backend: FastAPI, Async SQLAlchemy, Celery
+  │    └── Mobile: React Native / Flutter App
+  │
+  ├── [ Event & Stream Processing ]
+  │    ├── Apache Kafka (Real-time Document Streaming)
+  │    └── Zookeeper (Cluster Coordination)
+  │
+  └── [ Multi-Model Persistence Layer ]
+       ├── Neo4j Cluster (Topological Knowledge Graph)
+       ├── Qdrant Cluster (Semantic Vector Embeddings)
+       ├── PostgreSQL (Enterprise RBAC & Metadata)
+       └── Redis Memory (High-speed Caching & State)
 ```
 
 ---
