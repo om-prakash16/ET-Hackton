@@ -793,7 +793,7 @@ export default function AdminDashboard() {
                   <YAxis stroke="#64748b" fontSize={10} tickLine={false} axisLine={false} tickFormatter={(val) => `$${val / 1000}K`} />
                   <RechartsTooltip 
                     contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #334155', borderRadius: '0.75rem', color: '#fff', fontSize: '11px' }}
-                    formatter={(val) => [`$${val.toLocaleString()}`, "Revenue"]}
+                    formatter={(val: any) => [`$${(val || 0).toLocaleString()}`, "Revenue"]}
                   />
                   <Bar dataKey="revenue" fill="#3b82f6" radius={[3, 3, 0, 0]} barSize={14} />
                 </BarChart>

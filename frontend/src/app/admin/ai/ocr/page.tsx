@@ -174,7 +174,7 @@ export default function OCRCenterPage() {
                             <span className={`font-mono font-bold ${job.confidence > 90 ? 'text-emerald-400' : job.confidence > 75 ? 'text-amber-400' : 'text-red-400'}`}>
                               {job.confidence}%
                             </span>
-                            {job.confidence < 75 && <AlertTriangle className="w-3.5 h-3.5 text-red-400" title="Low Confidence - Manual Review Required" />}
+                            {job.confidence < 75 && <div title="Low Confidence - Manual Review Required"><AlertTriangle className="w-3.5 h-3.5 text-red-400" /></div>}
                           </div>
                         ) : (
                           <span className="text-zinc-600">—</span>

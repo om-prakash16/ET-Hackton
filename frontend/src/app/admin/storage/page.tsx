@@ -148,7 +148,7 @@ export default function StoragePage() {
                   <tr key={idx} className="hover:bg-zinc-800/30 transition-colors group">
                     <td className="px-6 py-4 font-medium flex items-center gap-2 text-white">
                       <Building2 className="w-4 h-4 text-zinc-500" /> {org.org}
-                      {org.util > 90 && <AlertTriangle className="w-4 h-4 text-red-500 ml-1" title="Storage almost full" />}
+                      {org.util > 90 && <div title="Storage almost full"><AlertTriangle className="w-4 h-4 text-red-500 ml-1" /></div>}
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex flex-col gap-1.5">

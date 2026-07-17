@@ -75,7 +75,7 @@ export default function AdminLayout({
     { label: "System Settings", icon: Settings, href: "/admin/settings", badge: null },
   ];
 
-  const renderNavSection = (title: string, items: typeof platformNavItems) => (
+  const renderNavSection = (title: string, items: any[]) => (
     <div className="space-y-1 pt-1">
       {!isCollapsed && (
         <div className="px-3 mb-2 mt-4 text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">
