@@ -84,6 +84,41 @@ To scale this into a global enterprise product, our immediate roadmap includes:
 *   **Edge-Deployed LLMs:** Running lightweight, quantized LLMs directly on mobile devices for offshore oil rigs or remote mines with zero internet connectivity.
 *   **3D Digital Twin Overlay:** Mapping the Neo4j graph nodes directly onto 3D CAD models for spatial maintenance intelligence and AR field support.
 
+---
+
+## 9. Evaluation & Testing Guide (For Judges)
+
+To fully evaluate the Multi-Tenant RBAC and GraphRAG capabilities of IndusBrain, you can utilize the following test accounts:
+
+### 🔐 Test Credentials
+*   **Super Admin:** `superadmin@indusbrain.ai` | Password: `admin123`
+    *(Has global visibility across all tenants and can trigger system-wide compliance audits).*
+*   **Plant Head:** `manager@tatasteel.com` | Password: `admin123`
+    *(Has isolated visibility restricted to Plant-A analytics and alerts).*
+*   **Maintenance Engineer:** `engineer@tatasteel.com` | Password: `admin123`
+    *(Has access to perform Root Cause Analysis via the AI Copilot).*
+
+### 🛠️ Environment (.env) Setup
+For security reasons, `.env` files are strictly excluded from our GitHub repository. To run this project locally, create a `.env.local` file in the `frontend` directory with the following variables:
+
+```env
+# /frontend/.env.local
+NEXT_PUBLIC_API_URL=http://localhost:8000
+GEMINI_API_KEY=your_gemini_api_key_here
+```
+
+To run the backend, create a `.env` file in the `backend` directory:
+```env
+# /backend/.env
+DATABASE_URL=postgresql+asyncpg://postgres:postgres@localhost:5432/indusbrain
+REDIS_URL=redis://localhost:6380/0
+NEO4J_URI=bolt://localhost:7687
+NEO4J_USER=neo4j
+NEO4J_PASSWORD=password
+QDRANT_URL=http://localhost:6333
+```
+*(All local database infrastructure can be instantly provisioned by running `docker compose up -d` in the `/docker` folder).*
+
 ***
 
 *End of Document. Prepared for the Economic Times AI Hackathon 2.0.*
