@@ -43,7 +43,7 @@ export function SmtpConfigModal({ isOpen, onClose }: SmtpConfigModalProps) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          to: smtpUser || "andad622@gmail.com",
+          to: smtpUser || "your.email@gmail.com",
           subject: "🎉 IndusBrain AI - Live SMTP Connection Verified!",
           text: "Congratulations! Your SMTP server connection is working perfectly on port " + smtpPort + ".",
           html: `<div style="font-family: Arial, sans-serif; padding: 25px; background: #0B1121; color: #ffffff; border-radius: 12px; border: 1px solid #10B981;">
@@ -115,7 +115,7 @@ export function SmtpConfigModal({ isOpen, onClose }: SmtpConfigModalProps) {
               type="email" 
               value={smtpUser} 
               onChange={(e) => setSmtpUser(e.target.value)}
-              placeholder="e.g. andad622@gmail.com"
+              placeholder="e.g. your.email@gmail.com"
               className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"
             />
           </div>

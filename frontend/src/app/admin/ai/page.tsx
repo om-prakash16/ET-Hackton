@@ -7,6 +7,21 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 export default function AICenterDashboard() {
+  const [features, setFeatures] = React.useState([
+    { name: "AI Copilot Engine", active: true },
+    { name: "OCR & Text Extraction", active: true },
+    { name: "Semantic Search", active: true },
+    { name: "Knowledge Graph Generation", active: true },
+    { name: "Automated Metadata Extraction", active: false },
+    { name: "Voice AI Services", active: false },
+  ]);
+
+  const toggleFeature = (index: number) => {
+    const newFeatures = [...features];
+    newFeatures[index].active = !newFeatures[index].active;
+    setFeatures(newFeatures);
+  };
+
   const KPIS = [
     { title: "Total AI Requests", value: "1.24M", icon: Activity, color: "blue" },
     { title: "Average Latency", value: "840ms", icon: Clock, color: "emerald" },
@@ -84,20 +99,15 @@ export default function AICenterDashboard() {
             <h3 className="font-bold text-white">Global AI Features</h3>
           </div>
           <div className="p-4 space-y-4">
-            {[
-              { name: "AI Copilot Engine", active: true },
-              { name: "OCR & Text Extraction", active: true },
-              { name: "Semantic Search", active: true },
-              { name: "Knowledge Graph Generation", active: true },
-              { name: "Automated Metadata Extraction", active: false },
-              { name: "Voice AI Services", active: false },
-            ].map((feature, idx) => (
+            {features.map((feature, idx) => (
               <div key={idx} className="flex items-center justify-between p-3 bg-zinc-950 rounded-lg border border-zinc-800/50">
                 <span className="text-sm font-semibold text-zinc-300">{feature.name}</span>
-                <div className="relative inline-block w-10 h-5 align-middle select-none">
-                  <input type="checkbox" className="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 border-blue-500 appearance-none cursor-pointer right-0" checked={feature.active} readOnly/>
-                  <label className={`toggle-label block overflow-hidden h-5 rounded-full cursor-pointer ${feature.active ? 'bg-blue-500' : 'bg-zinc-700'}`}></label>
-                </div>
+                <button 
+                  onClick={() => toggleFeature(idx)}
+                  className={`relative inline-flex h-5 w-10 items-center rounded-full transition-colors focus:outline-none ${feature.active ? 'bg-blue-500' : 'bg-zinc-700'}`}
+                >
+                  <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${feature.active ? 'translate-x-5' : 'translate-x-1'}`} />
+                </button>
               </div>
             ))}
           </div>

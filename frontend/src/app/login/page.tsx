@@ -72,13 +72,34 @@ export default function LoginPage() {
     }
 
     let targetUrl = "";
-    if (email.toLowerCase() === "prakash.om.global@gmail.com") {
+    const testAccounts: Record<string, string> = {
+      "superadmin@indusbrain.ai": "Super Admin",
+      "admin@tatasteel.com": "Tenant Admin",
+      "planthead@tatasteel.com": "Plant Head",
+      "ops@tatasteel.com": "Operations Manager",
+      "maintenance@tatasteel.com": "Maintenance Engineer",
+      "analyst@tatasteel.com": "AI Analyst",
+      "operator@tatasteel.com": "Operator",
+      "auditor@deloitte.com": "External Auditor",
+      "safety@tatasteel.com": "Safety Inspector",
+      "prakash.om.global@gmail.com": "Super Admin"
+    };
+
+    const normalizedEmail = email.toLowerCase();
+    
+    if (testAccounts[normalizedEmail]) {
       targetUrl = "/admin";
+      if (typeof window !== "undefined") {
+        localStorage.setItem("indusbrain_user_role", testAccounts[normalizedEmail]);
+      }
     } else {
-      const emailPrefix = email.split('@')[0].toLowerCase();
+      const emailPrefix = normalizedEmail.split('@')[0];
       const validRoles = ["admin", "plant", "operations", "maintenance-manager", "maintenance", "reliability", "quality-manager", "quality", "safety", "production", "technician", "auditor", "contractor", "viewer"];
       const role = validRoles.includes(emailPrefix) ? emailPrefix : "admin";
       targetUrl = `/workspace/${role}/dashboard`;
+      if (typeof window !== "undefined") {
+        localStorage.setItem("indusbrain_user_role", "Tenant Admin"); // Fallback
+      }
     }
 
     await signIn("credentials", { email, password, callbackUrl: targetUrl });

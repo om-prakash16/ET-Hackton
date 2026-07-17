@@ -32,57 +32,86 @@ export default function AdminLayout({
   const userName = session?.user?.name || "Super Admin";
   const userInitials = userName.substring(0, 2).toUpperCase();
 
+  let userRole = "Super Admin";
+  if (userEmail.includes("superadmin")) userRole = "Super Admin";
+  else if (userEmail.includes("admin@")) userRole = "Tenant Admin";
+  else if (userEmail.includes("planthead")) userRole = "Plant Head";
+  else if (userEmail.includes("ops")) userRole = "Operations Manager";
+  else if (userEmail.includes("maintenance")) userRole = "Maintenance Engineer";
+  else if (userEmail.includes("analyst")) userRole = "AI Analyst";
+  else if (userEmail.includes("operator")) userRole = "Operator";
+  else if (userEmail.includes("auditor")) userRole = "External Auditor";
+  else if (userEmail.includes("safety")) userRole = "Safety Inspector";
+
   // Top Dashboard Link
   const dashboardItem = { label: "Dashboard", icon: LayoutDashboard, href: "/admin", badge: null };
 
   // PLATFORM Section
   const platformNavItems = [
-    { label: "Tenant Organizations", icon: Building2, href: "/admin/tenants", badge: null },
-    { label: "Platform Users", icon: Users, href: "/admin/users", badge: null },
-    { label: "Billing & Payments", icon: DollarSign, href: "/admin/billing", badge: null },
-    { label: "Licenses", icon: Shield, href: "/admin/licenses", badge: null },
-    { label: "Storage", icon: Database, href: "/admin/storage", badge: null },
+    { label: "Tenant Organizations", icon: Building2, href: "/admin/organizations", badge: null, roles: ["Super Admin"] },
+    { label: "Plants & Facilities", icon: Layers, href: "/admin/plants", badge: null, roles: ["Super Admin", "Tenant Admin", "Plant Head"] },
+    { label: "Platform Users", icon: Users, href: "/admin/users", badge: null, roles: ["Super Admin", "Tenant Admin", "Plant Head"] },
+    { label: "Billing & Payments", icon: DollarSign, href: "/admin/billing", badge: null, roles: ["Super Admin", "Tenant Admin"] },
+    { label: "Licenses", icon: Shield, href: "/admin/licenses", badge: null, roles: ["Super Admin", "Tenant Admin"] },
+    { label: "Storage", icon: Database, href: "/admin/storage", badge: null, roles: ["Super Admin", "Tenant Admin"] },
+  ];
+
+  // OPERATIONS Section
+  const operationsNavItems = [
+    { label: "Departments", icon: Users, href: "/admin/departments", badge: null, roles: ["Super Admin", "Tenant Admin", "Plant Head"] },
+    { label: "Asset Health", icon: Activity, href: "/admin/assets", badge: null, roles: ["Super Admin", "Plant Head", "Maintenance Engineer", "Operations Manager"] },
+    { label: "Critical", icon: ShieldAlert, href: "/admin/critical", badge: "3", roles: ["Super Admin", "Plant Head", "Operator", "Operations Manager"] },
+    { label: "Maintenance", icon: Plug, href: "/admin/maintenance", badge: null, roles: ["Super Admin", "Maintenance Engineer", "Plant Head"] },
   ];
 
   // PLATFORM INTEGRATIONS Section
   const integrationNavItems = [
-    { label: "Integration Hub", icon: Combine, href: "/admin/integration", badge: "CORE" },
-    { label: "API Gateway", icon: Network, href: "/admin/api-gateway", badge: null },
+    { label: "Integration Hub", icon: Combine, href: "/admin/integrations", badge: "CORE", roles: ["Super Admin", "Tenant Admin"] },
+    { label: "API Gateway", icon: Network, href: "/admin/api", badge: null, roles: ["Super Admin", "Tenant Admin"] },
   ];
 
   // AI CENTER Section
   const aiCenterNavItems = [
-    { label: "AI Operations Brain", icon: Brain, href: "/admin/ai/brain", badge: "CORE" },
-    { label: "AI Center", icon: Bot, href: "/admin/ai", badge: null },
-    { label: "AI Models", icon: Bot, href: "/admin/ai/models", badge: null },
-    { label: "AI Agents", icon: Bot, href: "/admin/ai/agents", badge: null },
-    { label: "Prompt Library", icon: BookOpen, href: "/admin/ai/prompts", badge: null },
-    { label: "OCR Center", icon: ScanText, href: "/admin/ai/ocr", badge: null },
-    { label: "Knowledge Graph", icon: Network, href: "/admin/ai/knowledge-graph", badge: null },
-    { label: "Vector Database", icon: Database, href: "/admin/ai/vector-database", badge: null },
-    { label: "Search Engine", icon: SearchCode, href: "/admin/ai/search", badge: null },
+    { label: "AI Operations Brain", icon: Brain, href: "/admin/ai/brain", badge: "CORE", roles: ["Super Admin", "Tenant Admin", "Plant Head", "AI Analyst"] },
+    { label: "AI Insights", icon: Lightbulb, href: "/admin/analytics", badge: null, roles: ["Super Admin", "Tenant Admin", "AI Analyst", "Plant Head", "Operations Manager"] },
+    { label: "Lessons Learned", icon: BookOpen, href: "/admin/ai/lessons-learned", badge: "NEW", roles: ["Super Admin", "Maintenance Engineer", "AI Analyst", "Plant Head"] },
+    { label: "AI Center", icon: Bot, href: "/admin/ai", badge: null, roles: ["Super Admin", "Tenant Admin", "AI Analyst"] },
+    { label: "AI Models", icon: Bot, href: "/admin/ai/models", badge: null, roles: ["Super Admin", "Tenant Admin", "AI Analyst"] },
+    { label: "AI Agents", icon: Bot, href: "/admin/ai/agents", badge: null, roles: ["Super Admin", "AI Analyst"] },
+    { label: "Prompt Library", icon: BookOpen, href: "/admin/ai/prompts", badge: null, roles: ["Super Admin", "AI Analyst"] },
+    { label: "OCR Center", icon: ScanText, href: "/admin/ai/ocr", badge: null, roles: ["Super Admin", "Operations Manager"] },
+    { label: "Knowledge Graph", icon: Network, href: "/admin/ai/knowledge-graph", badge: null, roles: ["Super Admin", "Maintenance Engineer", "AI Analyst"] },
+    { label: "Vector Database", icon: Database, href: "/admin/ai/vector-database", badge: null, roles: ["Super Admin", "AI Analyst"] },
+    { label: "Search Engine", icon: SearchCode, href: "/admin/ai/search", badge: null, roles: ["Super Admin", "Tenant Admin", "Plant Head", "Operations Manager", "Maintenance Engineer", "AI Analyst", "Operator", "External Auditor", "Safety Inspector"] },
   ];
 
   // SYSTEM & SECURITY Section
   const systemNavItems = [
-    { label: "Enterprise Governance", icon: ShieldCheck, href: "/admin/governance", badge: "PROD" },
-    { label: "System Health", icon: Activity, href: "/admin/health", badge: null },
-    { label: "Audit Logs", icon: History, href: "/admin/audit", badge: null },
+    { label: "Enterprise Governance", icon: ShieldCheck, href: "/admin/governance", badge: "PROD", roles: ["Super Admin", "Tenant Admin", "External Auditor", "Safety Inspector"] },
+    { label: "Compliance", icon: FileText, href: "/admin/compliance", badge: null, roles: ["Super Admin", "Tenant Admin", "External Auditor", "Safety Inspector"] },
+    { label: "Roles & Access", icon: Shield, href: "/admin/roles", badge: null, roles: ["Super Admin", "Tenant Admin"] },
+    { label: "System Health", icon: Activity, href: "/admin/system", badge: null, roles: ["Super Admin", "Tenant Admin", "Plant Head", "Operations Manager"] },
+    { label: "Audit Logs", icon: History, href: "/admin/audit", badge: null, roles: ["Super Admin", "Tenant Admin", "External Auditor"] },
   ];
 
   // SETTINGS Section
   const settingsNavItems = [
-    { label: "System Settings", icon: Settings, href: "/admin/settings", badge: null },
+    { label: "System Settings", icon: Settings, href: "/admin/settings", badge: null, roles: ["Super Admin", "Tenant Admin"] },
+    { label: "Help Center", icon: HelpCircle, href: "/admin/help", badge: null, roles: ["Super Admin", "Tenant Admin", "Plant Head", "Operations Manager", "Maintenance Engineer", "AI Analyst", "Operator", "External Auditor", "Safety Inspector"] },
   ];
 
-  const renderNavSection = (title: string, items: any[]) => (
-    <div className="space-y-1 pt-1">
-      {!isCollapsed && (
-        <div className="px-3 mb-2 mt-4 text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">
-          {title}
-        </div>
-      )}
-      {items.map((item) => {
+  const renderNavSection = (title: string, items: any[]) => {
+    const filteredItems = items.filter(item => !item.roles || item.roles.includes(userRole));
+    if (filteredItems.length === 0) return null;
+
+    return (
+      <div className="space-y-1 pt-1">
+        {!isCollapsed && (
+          <div className="px-3 mb-2 mt-4 text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">
+            {title}
+          </div>
+        )}
+        {filteredItems.map((item) => {
         const isActive = pathname === item.href || (item.href !== "/admin" && pathname?.startsWith(`${item.href}`));
         return (
           <Link
@@ -110,6 +139,7 @@ export default function AdminLayout({
       })}
     </div>
   );
+  };
 
   return (
     <div className="flex h-screen w-full bg-[#0a0f1d] overflow-hidden text-slate-100 font-sans">
@@ -137,7 +167,7 @@ export default function AdminLayout({
             {!isCollapsed && (
               <div className="flex flex-col whitespace-nowrap">
                 <span className="text-base font-extrabold leading-none tracking-tight text-white">IndusBrain <span className="text-blue-400">AI</span></span>
-                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">SUPER ADMIN</span>
+                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">{userRole.toUpperCase()}</span>
               </div>
             )}
           </Link>
@@ -191,9 +221,10 @@ export default function AdminLayout({
           </div>
 
           {renderNavSection("PLATFORM", platformNavItems)}
+          {renderNavSection("OPERATIONS", operationsNavItems)}
+          {renderNavSection("INTEGRATIONS", integrationNavItems)}
           {renderNavSection("AI CENTER", aiCenterNavItems)}
           {renderNavSection("SYSTEM & SECURITY", systemNavItems)}
-
           {renderNavSection("SETTINGS", settingsNavItems)}
 
         </div>

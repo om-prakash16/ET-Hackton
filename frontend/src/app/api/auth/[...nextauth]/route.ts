@@ -39,11 +39,29 @@ const authOptions: AuthOptions = {
           console.log("Backend offline or unreachable, using standalone demo session for:", credentials.email);
         }
 
-        // Fallback for standalone frontend / Render testing
+        // Fallback for standalone frontend / Hackathon demo mode
+        const email = credentials.email.toLowerCase();
+        
+        // Mock account directory
+        const mockAccounts: Record<string, { name: string, role: string }> = {
+          "superadmin@indusbrain.ai": { name: "Om Prakash", role: "Super Admin" },
+          "admin@tatasteel.com": { name: "Ravi Kumar", role: "Tenant Admin" },
+          "planthead@tatasteel.com": { name: "Priya Sharma", role: "Plant Head" },
+          "ops@tatasteel.com": { name: "Amit Patel", role: "Operations Manager" },
+          "maintenance@tatasteel.com": { name: "Vikram Singh", role: "Maintenance Engineer" },
+          "analyst@tatasteel.com": { name: "Neha Gupta", role: "AI Analyst" },
+          "operator@tatasteel.com": { name: "Suresh Menon", role: "Operator" },
+          "auditor@deloitte.com": { name: "Anil Desai", role: "External Auditor" },
+          "safety@tatasteel.com": { name: "Kavita Reddy", role: "Safety Inspector" }
+        };
+
+        const mockUser = mockAccounts[email] || { name: "Demo User", role: "Demo Role" };
+
         return {
           id: "demo-" + Date.now(),
           email: credentials.email,
-          accessToken: "demo-jwt-token-for-testing",
+          name: mockUser.name,
+          accessToken: `demo-jwt-${mockUser.role.replace(" ", "-").toLowerCase()}`,
         };
       }
     }),

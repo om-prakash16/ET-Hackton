@@ -1,23 +1,39 @@
-import React from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
 import { 
   Building2, Users, Database, Cpu, Activity, FileText, 
   TrendingUp, AlertCircle, CheckCircle2, ShieldAlert,
   Server, HardDrive, Zap, Network, ArrowUpRight, Plus,
-  CreditCard, CheckCircle, PauseCircle, Ticket, Radio, Bot, ListRestart, Link as LinkIcon, History
+  CreditCard, CheckCircle, PauseCircle, Ticket, Radio, Bot, ListRestart, Link as LinkIcon, History,
+  ScanText, Share2, Layers, Sparkles
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
-export default function SuperAdminDashboard() {
+export default function AdminDashboard() {
+  const [userRole, setUserRole] = useState<string>("Super Admin");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const role = localStorage.getItem("indusbrain_user_role");
+      if (role) setUserRole(role);
+    }
+  }, []);
+
   return (
     <div className="space-y-8 animate-fade-in-up p-4 lg:p-8">
       
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold tracking-tight text-foreground">Platform Control Center</h1>
-          <p className="text-sm text-muted-foreground mt-1">Super Admin overview of infrastructure, AI, and organization health.</p>
+          <h1 className="text-2xl lg:text-3xl font-bold tracking-tight text-foreground">
+            {userRole === "Super Admin" ? "Platform Control Center" : `${userRole} Dashboard`}
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            {userRole === "Super Admin" ? "Super Admin overview of infrastructure, AI, and organization health." : `Overview and insights tailored for ${userRole} operations.`}
+          </p>
         </div>
         <div className="flex items-center gap-3">
           <Badge variant="outline" className="bg-success/10 text-success border-success/20 px-3 py-1">
@@ -166,6 +182,46 @@ export default function SuperAdminDashboard() {
         {/* Left Column (Wider) */}
         <div className="lg:col-span-2 space-y-6">
           
+          {/* AI Workflow Visualization */}
+          <Card className="border-border bg-zinc-900 overflow-hidden flex flex-col shadow-sm">
+            <div className="px-6 py-4 border-b border-zinc-800 bg-zinc-950/50 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Network className="w-4 h-4 text-purple-400" />
+                <h3 className="font-bold text-white text-sm">AI Processing Pipeline</h3>
+              </div>
+              <Badge variant="outline" className="border-blue-500/30 text-blue-400 bg-blue-500/5">
+                Live Topology
+              </Badge>
+            </div>
+            <div className="flex-1 p-8 flex items-center justify-center bg-[#0a0f1d] relative overflow-hidden">
+              <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+              <div className="relative z-10 flex flex-wrap justify-center gap-4 max-w-2xl">
+                {[
+                  { label: "Document Upload", icon: FileText, color: "blue" },
+                  { label: "OCR Processing", icon: ScanText, color: "amber" },
+                  { label: "Classification", icon: Bot, color: "purple" },
+                  { label: "Entity Extraction", icon: Network, color: "emerald" },
+                  { label: "Knowledge Graph", icon: Share2, color: "blue" },
+                  { label: "Embeddings", icon: Layers, color: "purple" },
+                  { label: "Vector DB", icon: Database, color: "emerald" },
+                  { label: "AI Copilot", icon: Sparkles, color: "amber" },
+                ].map((step, idx) => (
+                  <div key={idx} className="flex items-center">
+                    <div className={`flex flex-col items-center justify-center p-4 bg-zinc-900 border border-zinc-800 rounded-xl shadow-lg w-28 h-24 group hover:border-${step.color}-500/50 transition-colors`}>
+                      <step.icon className={`w-6 h-6 text-${step.color}-400 mb-2`} />
+                      <span className="text-[10px] font-semibold text-zinc-300 text-center">{step.label}</span>
+                    </div>
+                    {idx < 7 && (
+                      <div className="w-6 h-0.5 bg-zinc-800 mx-2 relative hidden sm:block">
+                        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 border-t-2 border-r-2 border-zinc-700 rotate-45"></div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Card>
+
           {/* AI Processing Queue (Glass Panel) */}
           <Card className="glass border-border/50">
             <CardHeader className="border-b border-border/50 pb-4 flex flex-row items-center justify-between">
@@ -284,47 +340,49 @@ export default function SuperAdminDashboard() {
         <div className="space-y-6">
           
           {/* Quick Actions (Super Admin specific) */}
-          <Card className="border-border bg-card">
-            <CardHeader className="pb-3 border-b border-border/50">
-              <CardTitle className="text-sm font-semibold">Super Admin Actions</CardTitle>
-            </CardHeader>
-            <CardContent className="p-4">
-              <div className="grid grid-cols-2 gap-3">
-                <Button variant="outline" className="h-auto py-3 flex flex-col gap-2 items-center justify-center text-xs bg-background/50 hover:bg-primary/10 hover:text-primary hover:border-primary/50 transition-colors">
-                  <Plus className="w-5 h-5 text-muted-foreground" />
-                  Create Organization
-                </Button>
-                <Button variant="outline" className="h-auto py-3 flex flex-col gap-2 items-center justify-center text-xs bg-background/50 hover:bg-success/10 hover:text-success hover:border-success/50 transition-colors">
-                  <CheckCircle className="w-5 h-5 text-muted-foreground" />
-                  Approve Org
-                </Button>
-                <Button variant="outline" className="h-auto py-3 flex flex-col gap-2 items-center justify-center text-xs bg-background/50 hover:bg-danger/10 hover:text-danger hover:border-danger/50 transition-colors">
-                  <PauseCircle className="w-5 h-5 text-muted-foreground" />
-                  Suspend Org
-                </Button>
-                <Button variant="outline" className="h-auto py-3 flex flex-col gap-2 items-center justify-center text-xs bg-background/50 hover:bg-info/10 hover:text-info hover:border-info/50 transition-colors">
-                  <CreditCard className="w-5 h-5 text-muted-foreground" />
-                  Assign Subscription
-                </Button>
-                <Button variant="outline" className="h-auto py-3 flex flex-col gap-2 items-center justify-center text-xs bg-background/50 hover:bg-accent/10 hover:text-accent hover:border-accent/50 transition-colors">
-                  <Ticket className="w-5 h-5 text-muted-foreground" />
-                  Create License
-                </Button>
-                <Button variant="outline" className="h-auto py-3 flex flex-col gap-2 items-center justify-center text-xs bg-background/50 hover:bg-warning/10 hover:text-warning hover:border-warning/50 transition-colors">
-                  <Radio className="w-5 h-5 text-muted-foreground" />
-                  Broadcast Alert
-                </Button>
-                <Button variant="outline" className="h-auto py-3 flex flex-col gap-2 items-center justify-center text-xs bg-background/50 hover:bg-primary/10 hover:text-primary hover:border-primary/50 transition-colors">
-                  <Bot className="w-5 h-5 text-muted-foreground" />
-                  Configure AI
-                </Button>
-                <Button variant="outline" className="h-auto py-3 flex flex-col gap-2 items-center justify-center text-xs bg-background/50 hover:bg-orange-500/10 hover:text-orange-500 hover:border-orange-500/50 transition-colors">
-                  <ListRestart className="w-5 h-5 text-muted-foreground" />
-                  Restart OCR
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          {userRole === "Super Admin" && (
+            <Card className="border-border bg-card">
+              <CardHeader className="pb-3 border-b border-border/50">
+                <CardTitle className="text-sm font-semibold">Super Admin Actions</CardTitle>
+              </CardHeader>
+              <CardContent className="p-4">
+                <div className="grid grid-cols-2 gap-3">
+                  <Button variant="outline" className="h-auto py-3 flex flex-col gap-2 items-center justify-center text-xs bg-background/50 hover:bg-primary/10 hover:text-primary hover:border-primary/50 transition-colors">
+                    <Plus className="w-5 h-5 text-muted-foreground" />
+                    Create Organization
+                  </Button>
+                  <Button variant="outline" className="h-auto py-3 flex flex-col gap-2 items-center justify-center text-xs bg-background/50 hover:bg-success/10 hover:text-success hover:border-success/50 transition-colors">
+                    <CheckCircle className="w-5 h-5 text-muted-foreground" />
+                    Approve Org
+                  </Button>
+                  <Button variant="outline" className="h-auto py-3 flex flex-col gap-2 items-center justify-center text-xs bg-background/50 hover:bg-danger/10 hover:text-danger hover:border-danger/50 transition-colors">
+                    <PauseCircle className="w-5 h-5 text-muted-foreground" />
+                    Suspend Org
+                  </Button>
+                  <Button variant="outline" className="h-auto py-3 flex flex-col gap-2 items-center justify-center text-xs bg-background/50 hover:bg-info/10 hover:text-info hover:border-info/50 transition-colors">
+                    <CreditCard className="w-5 h-5 text-muted-foreground" />
+                    Assign Subscription
+                  </Button>
+                  <Button variant="outline" className="h-auto py-3 flex flex-col gap-2 items-center justify-center text-xs bg-background/50 hover:bg-accent/10 hover:text-accent hover:border-accent/50 transition-colors">
+                    <Ticket className="w-5 h-5 text-muted-foreground" />
+                    Create License
+                  </Button>
+                  <Button variant="outline" className="h-auto py-3 flex flex-col gap-2 items-center justify-center text-xs bg-background/50 hover:bg-warning/10 hover:text-warning hover:border-warning/50 transition-colors">
+                    <Radio className="w-5 h-5 text-muted-foreground" />
+                    Broadcast Alert
+                  </Button>
+                  <Button variant="outline" className="h-auto py-3 flex flex-col gap-2 items-center justify-center text-xs bg-background/50 hover:bg-primary/10 hover:text-primary hover:border-primary/50 transition-colors">
+                    <Bot className="w-5 h-5 text-muted-foreground" />
+                    Configure AI
+                  </Button>
+                  <Button variant="outline" className="h-auto py-3 flex flex-col gap-2 items-center justify-center text-xs bg-background/50 hover:bg-orange-500/10 hover:text-orange-500 hover:border-orange-500/50 transition-colors">
+                    <ListRestart className="w-5 h-5 text-muted-foreground" />
+                    Restart OCR
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* System Alerts */}
           <Card className="border-danger/30 bg-danger/5">

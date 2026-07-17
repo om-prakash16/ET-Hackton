@@ -16,9 +16,14 @@ interface Role {
 
 const INITIAL_ROLES: Role[] = [
   { id: "role-1", name: "Super Admin", description: "Full access to all platform features.", permissionsCount: 145, usersCount: 2, type: "system" },
-  { id: "role-2", name: "Plant Head", description: "Manage plant operations and staff.", permissionsCount: 85, usersCount: 14, type: "system" },
-  { id: "role-3", name: "Operations Manager", description: "Manage day-to-day operations.", permissionsCount: 65, usersCount: 42, type: "system" },
-  { id: "role-4", name: "External Auditor", description: "Read-only access for compliance checks.", permissionsCount: 12, usersCount: 5, type: "custom" },
+  { id: "role-2", name: "Tenant Admin", description: "Manage organization-wide settings and users.", permissionsCount: 120, usersCount: 15, type: "system" },
+  { id: "role-3", name: "Plant Head", description: "Manage specific plant operations and staff.", permissionsCount: 85, usersCount: 34, type: "system" },
+  { id: "role-4", name: "Operations Manager", description: "Manage day-to-day manufacturing operations.", permissionsCount: 65, usersCount: 142, type: "system" },
+  { id: "role-5", name: "Maintenance Engineer", description: "Access predictive maintenance and asset health.", permissionsCount: 45, usersCount: 280, type: "system" },
+  { id: "role-6", name: "AI / Data Analyst", description: "Access to AI models, GraphRAG, and telemetry.", permissionsCount: 55, usersCount: 45, type: "system" },
+  { id: "role-7", name: "Operator", description: "Floor-level access for alerts and basic monitoring.", permissionsCount: 15, usersCount: 850, type: "system" },
+  { id: "role-8", name: "External Auditor", description: "Read-only access for compliance checks.", permissionsCount: 12, usersCount: 8, type: "custom" },
+  { id: "role-9", name: "Safety Inspector", description: "Access to safety incident reports and governance.", permissionsCount: 20, usersCount: 12, type: "custom" },
 ];
 
 export default function RolesPage() {

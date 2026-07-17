@@ -5,9 +5,23 @@ export default withAuth(
   function middleware(req) {
     const token = req.nextauth.token;
 
-    // Strict RBAC: Only prakash.om.global@gmail.com is allowed in /admin
+    // Strict RBAC: Allow all Hackathon demo accounts to access the /admin portal
     if (req.nextUrl.pathname.startsWith("/admin")) {
-      if (token?.email !== "prakash.om.global@gmail.com") {
+      const email = token?.email?.toLowerCase() || "";
+      const testAccounts = [
+        "superadmin@indusbrain.ai",
+        "admin@tatasteel.com",
+        "planthead@tatasteel.com",
+        "ops@tatasteel.com",
+        "maintenance@tatasteel.com",
+        "analyst@tatasteel.com",
+        "operator@tatasteel.com",
+        "auditor@deloitte.com",
+        "safety@tatasteel.com",
+        "prakash.om.global@gmail.com"
+      ];
+      
+      if (!testAccounts.includes(email)) {
         return NextResponse.redirect(new URL("/login?error=AccessDenied", req.url));
       }
     }

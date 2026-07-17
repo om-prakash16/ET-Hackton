@@ -33,10 +33,15 @@ interface Invitation {
 }
 
 const INITIAL_USERS: User[] = [
-  { id: "usr-1", name: "Ravi Kumar", email: "ravi.kumar@tatasteel.com", role: "Organization Admin", department: "Operations", plant: "Jamshedpur Works - Unit 1", organization: "Tata Steel", status: "active", lastLogin: "2 mins ago" },
-  { id: "usr-2", name: "Priya Sharma", email: "priya.s@reliance.com", role: "Operations Manager", department: "Production", plant: "Jamnagar Refinery Complex", organization: "Reliance Industries", status: "active", lastLogin: "1 hr ago" },
-  { id: "usr-3", name: "Amit Patel", email: "amit.p@jsw.in", role: "Maintenance Engineer", department: "Maintenance", plant: "Dolvi Steel Plant", organization: "JSW Steel", status: "suspended", lastLogin: "2 days ago" },
-  { id: "usr-4", name: "Neha Singh", email: "neha.singh@adani.com", role: "Reliability Engineer", department: "Safety", plant: "Khavda Solar Park", organization: "Adani Green", status: "locked", lastLogin: "5 days ago" },
+  { id: "usr-demo-1", name: "Om Prakash", email: "superadmin@indusbrain.ai", role: "Super Admin", department: "Global AI", plant: "HQ", organization: "IndusBrain", status: "active", lastLogin: "Just now" },
+  { id: "usr-demo-2", name: "Ravi Kumar", email: "admin@tatasteel.com", role: "Tenant Admin", department: "IT / Admin", plant: "All Plants", organization: "Tata Steel", status: "active", lastLogin: "1 hr ago" },
+  { id: "usr-demo-3", name: "Priya Sharma", email: "planthead@tatasteel.com", role: "Plant Head", department: "Operations", plant: "Jamshedpur Works - Unit 1", organization: "Tata Steel", status: "active", lastLogin: "3 hrs ago" },
+  { id: "usr-demo-4", name: "Amit Patel", email: "ops@tatasteel.com", role: "Operations Manager", department: "Production", plant: "Jamshedpur Works - Unit 1", organization: "Tata Steel", status: "active", lastLogin: "1 day ago" },
+  { id: "usr-demo-5", name: "Vikram Singh", email: "maintenance@tatasteel.com", role: "Maintenance Engineer", department: "Maintenance", plant: "Jamshedpur Works - Unit 2", organization: "Tata Steel", status: "active", lastLogin: "5 mins ago" },
+  { id: "usr-demo-6", name: "Neha Gupta", email: "analyst@tatasteel.com", role: "AI / Data Analyst", department: "Data Science", plant: "All Plants", organization: "Tata Steel", status: "active", lastLogin: "2 days ago" },
+  { id: "usr-demo-7", name: "Suresh Menon", email: "operator@tatasteel.com", role: "Operator", department: "Shop Floor", plant: "Jamshedpur Works - Unit 1", organization: "Tata Steel", status: "active", lastLogin: "4 hrs ago" },
+  { id: "usr-demo-8", name: "Anil Desai", email: "auditor@deloitte.com", role: "External Auditor", department: "Compliance", plant: "Global", organization: "Deloitte", status: "active", lastLogin: "1 week ago" },
+  { id: "usr-demo-9", name: "Kavita Reddy", email: "safety@tatasteel.com", role: "Safety Inspector", department: "HSE", plant: "All Plants", organization: "Tata Steel", status: "suspended", lastLogin: "1 month ago" },
 ];
 
 const INITIAL_INVITATIONS: Invitation[] = [
